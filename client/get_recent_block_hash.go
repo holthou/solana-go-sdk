@@ -12,7 +12,7 @@ type GetRecentBlockHashResponse struct {
 	} `json:"feeCalculator"`
 }
 
-func (s *Client) GetRecentBlockhash(ctx context.Context) (GetRecentBlockHashResponse, error) {
+func (s *Client) GetRecentBlockhash(ctx context.Context) (*GetRecentBlockHashResponse, error) {
 	res := struct {
 		GeneralResponse
 		Result struct {
@@ -22,10 +22,10 @@ func (s *Client) GetRecentBlockhash(ctx context.Context) (GetRecentBlockHashResp
 	}{}
 	err := s.request(ctx, "getRecentBlockhash", []interface{}{}, &res)
 	if err != nil {
-		return GetRecentBlockHashResponse{}, err
+		return &GetRecentBlockHashResponse{}, err
 	}
 	if res.Error != (ErrorResponse{}) {
-		return GetRecentBlockHashResponse{}, errors.New(res.Error.Message)
+		return &GetRecentBlockHashResponse{}, errors.New(res.Error.Message)
 	}
-	return res.Result.Value, nil
+	return &res.Result.Value, nil
 }

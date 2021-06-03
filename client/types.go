@@ -19,6 +19,11 @@ type TransactionMeta struct {
 	Status map[string]interface{} `json:"status"`
 }
 
+type TransactionWithMeta struct {
+	Meta        TransactionMeta `json:"meta"`
+	Transaction Transaction     `json:"transaction"`
+}
+
 type MessageHeader struct {
 	NumRequiredSignatures       uint8 `json:"numRequiredSignatures"`
 	NumReadonlySignedAccounts   uint8 `json:"numReadonlySignedAccounts"`
