@@ -151,7 +151,7 @@ func checkEmptyBlock() {
 		params := []interface{}{height, arg}
 		block, err := client.GetConfirmedBlock(context.Background(), params...)
 		if err != nil {
-			fmt.Errorf("GetConfirmedBlock", err)
+			fmt.Println("GetConfirmedBlock", err)
 			continue
 		}
 		var str string
