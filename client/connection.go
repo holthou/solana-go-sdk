@@ -81,6 +81,10 @@ type ErrorResponse struct {
 	Message string `json:"message"`
 }
 
+func (e *ErrorResponse) Error() string {
+	return fmt.Sprintf("Code:%d Message:%s", e.Code, e.Message)
+}
+
 type Context struct {
 	Slot uint64 `json:"slot"`
 }

@@ -1,6 +1,9 @@
 package client
 
-import "context"
+import (
+	"context"
+	"reflect"
+)
 
 type GetConfirmBlockResponse struct {
 	Blockhash         string                `json:"blockhash"`
@@ -25,5 +28,11 @@ func (s *Client) GetConfirmedBlock(ctx context.Context, args ...interface{}) (*G
 	if err != nil {
 		return &GetConfirmBlockResponse{}, err
 	}
+
+	//返回的res.Error不为空，正常逻辑，接口返回错误
+	if !reflect.DeepEqual(res.Error, ErrorResponse{}) {
+		return &res.Result, &res.Error
+	}
+
 	return &res.Result, nil
 }
