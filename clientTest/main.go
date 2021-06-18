@@ -165,6 +165,38 @@ func checkEmptyBlock() {
 	fmt.Println("Total size: ", l.Len())
 }
 
+func checkBlock() {
+	client11 := client.NewClient(rpcUrl)
+	for {
+		slot, err := client11.GetSlot(context.Background())
+		if err != nil {
+			fmt.Errorf("GetSlot", err)
+			break
+		}
+
+		params := []interface{}{slot, arg}
+
+		block, err := client11.GetConfirmedBlock(context.Background(), params...)
+		if err != nil || block.Blockhash == "" {
+			if rpcErr, ok := err.(*client.ErrorResponse); ok {
+				//Slot 被跳过打印日志记录，按正常逻辑处理
+				//目前发现这两种是可以被忽略的情况,
+				if rpcErr.Code == -32007 || rpcErr.Code == -32009 {
+					fmt.Println("GetConfirmedBlock", err)
+				}
+			}
+		}
+
+		var str string
+		if block.Blockhash == "" {
+			str = fmt.Sprintf("slot:%d hash:%s ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", slot, block.Blockhash, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+		} else {
+			str = fmt.Sprintf("slot:%d hash:%s ParentSLot:%d PreviousHash:%s size:%d\n", slot, block.Blockhash, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+		}
+		fmt.Print("no ->" + str)
+	}
+}
+
 func main() {
-	checkEmptyBlock()
+	checkBlock()
 }
