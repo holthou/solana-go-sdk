@@ -15,8 +15,9 @@ import (
 const rpcUrl = "http://122.248.192.182:8899"
 
 var arg = map[string]interface{}{
-	"encoding":           "json",
-	"transactionDetails": "full",
+	"encoding": "json",
+	//"transactionDetails": "full",
+	"transactionDetails": "signatures",
 	"rewards":            false,
 	"commitment":         "finalized",
 }

@@ -13,6 +13,7 @@ type GetConfirmBlockResponse struct {
 	ParentSLot        uint64                `json:"parentSlot"`
 	BlockTime         int64                 `json:"blockTime"`
 	Transactions      []TransactionWithMeta `json:"transactions"`
+	Signatures        []string              `json:"signatures"`
 	Rewards           []struct {
 		Pubkey      string `json:"pubkey"`
 		Lamports    int64  `json:"lamports"`
