@@ -1,6 +1,8 @@
 package types
 
 import (
+	"encoding/hex"
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -62,6 +64,14 @@ func TestTransaction_Serialize(t *testing.T) {
 			}
 		})
 	}
+}
+
+//反解交易
+func TestTransaction_Serialize11(t *testing.T) {
+	encodedStr := "0109d8663596704540757a0c5a2bab2dc49789670a141a1a51e216e42a0aec6e74d4be9db07c9ac24e2ec3d471dbb9a43453e94aa7fcc181e2c4c279817574ec00010001035f7ea8352a02923ba82eeef5c285cebe82d2c397a79e90269331791286019b9bed7e11dfeb0da4cd475a0b638b988b79e078551dc20afe1e7cbd0f2723fa5d0500000000000000000000000000000000000000000000000000000000000000001fa81ede66b1835ca84b534c6f9f292df845b20943b88108d048696b811943f101020200010c02000000c04d059908000000"
+	test, _ := hex.DecodeString(encodedStr)
+	trx := MustTransactionDeserialize(test)
+	fmt.Println(trx.Message.RecentBlockHash)
 }
 
 func TestCreateRawTransaction(t *testing.T) {
