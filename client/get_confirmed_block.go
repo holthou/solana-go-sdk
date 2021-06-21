@@ -60,7 +60,7 @@ func (s *Client) GetConfirmedBlock(ctx context.Context, args ...interface{}) (*G
 				break
 			}
 			num++
-			time.Sleep(time.Millisecond * 500)
+			time.Sleep(time.Second)
 			continue
 		}
 		break
