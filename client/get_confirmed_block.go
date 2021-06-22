@@ -55,7 +55,7 @@ func (s *Client) GetConfirmedBlock(ctx context.Context, args ...interface{}) (*G
 		}
 		//块不可用时，重复获取
 		if res.Error.Code == -32004 {
-			if num >= 60 {
+			if num >= 30 {
 				logrus.Infof("GetConfirmedBlock break loop for time out! param:%v", args)
 				break
 			}
