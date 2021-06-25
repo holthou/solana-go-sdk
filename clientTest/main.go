@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"container/list"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/portto/solana-go-sdk/client"
 	"io"
@@ -198,6 +199,61 @@ func checkBlock() {
 	}
 }
 
+type Date111 struct {
+	Parsed struct {
+		Info struct {
+			IsNative    bool   `json:"isNative"`
+			Mint        string `json:"mint"`
+			Owner       string `json:"owner"`
+			State       string `json:"state"`
+			TokenAmount struct {
+				Amount         string  `json:"amount"`
+				Decimals       int     `json:"decimals"`
+				UiAmount       float64 `json:"uiAmount"`
+				UiAmountString string  `json:"uiAmountString"`
+			} `json:"tokenAmount"`
+		} `json:"info"`
+		Type string `json:"type"`
+	} `json:"parsed"`
+	Program string `json:"program"`
+	Space   int    `json:"space"`
+}
+
+func tet11() {
+	//rawurl := "https://api.devnet.solana.com"
+	//rawurl := "https://api.testnet.solana.com"
+	rawurl := "https://api.mainnet-beta.solana.com"
+
+	toPublicKey := "APhyMCpYjQ9RdEBn8cs4ifyBXjxAS5JtM3wYpWMJjsY5"
+	//toPublicKey := "2bj53paPfbLXFBruju2XHEfdrdfQjdD1d1iVwAKyGRCS"
+	cs := client.NewClient(rawurl)
+	//充值 验证地址必须为系统地址才可以
+	cfg := client.GetAccountInfoConfig{
+		Encoding: "jsonParsed",
+	}
+	info, _ := cs.GetAccountInfo(context.Background(), toPublicKey, cfg)
+	tt, ok := (info.Data).(Date111)
+	if ok {
+		fmt.Println(tt.Parsed.Info.Owner, tt.Parsed.Info.Mint)
+	} else {
+		fmt.Println("Fuck")
+	}
+
+	resByre, resByteErr := json.Marshal(info.Data)
+	if resByteErr != nil {
+		fmt.Println("读取信息失败")
+		return
+	}
+	var newData Date111
+	jsonRes := json.Unmarshal(resByre, &newData)
+	if jsonRes != nil {
+		fmt.Println("读取信息失败")
+		return
+	}
+
+	//fmt.Println(newData)
+	fmt.Println(newData.Parsed.Info.Owner, newData.Parsed.Info.Mint)
+}
 func main() {
-	checkBlock()
+	tet11()
 }

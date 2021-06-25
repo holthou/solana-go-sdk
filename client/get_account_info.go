@@ -48,7 +48,33 @@ type GetAccountInfoResponse struct {
 	Data      interface{} `json:"data"`
 }
 
-func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAccountInfoConfig) (GetAccountInfoResponse, error) {
+//type GetAccountInfoResponse struct {
+//	Data struct {
+//		Parsed struct {
+//			Info struct {
+//				IsNative    bool   `json:"isNative"`
+//				Mint        string `json:"mint"`
+//				Owner       string `json:"owner"`
+//				State       string `json:"state"`
+//				TokenAmount struct {
+//					Amount         string  `json:"amount"`
+//					Decimals       int     `json:"decimals"`
+//					UiAmount       float64 `json:"uiAmount"`
+//					UiAmountString string  `json:"uiAmountString"`
+//				} `json:"tokenAmount"`
+//			} `json:"info"`
+//			Type string `json:"type"`
+//		} `json:"parsed"`
+//		Program string `json:"program"`
+//		Space   int    `json:"space"`
+//	} `json:"data"`
+//	Executable bool   `json:"executable"`
+//	Lamports   int    `json:"lamports"`
+//	Owner      string `json:"owner"`
+//	RentEpoch  int    `json:"rentEpoch"`
+//}
+
+func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAccountInfoConfig) (*GetAccountInfoResponse, error) {
 	res := struct {
 		GeneralResponse
 		Result struct {
@@ -58,10 +84,10 @@ func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAcco
 	}{}
 	err := s.request(ctx, "getAccountInfo", []interface{}{account, cfg}, &res)
 	if err != nil {
-		return GetAccountInfoResponse{}, err
+		return &GetAccountInfoResponse{}, err
 	}
 	if res.Error != (ErrorResponse{}) {
-		return GetAccountInfoResponse{}, errors.New(res.Error.Message)
+		return &GetAccountInfoResponse{}, errors.New(res.Error.Message)
 	}
-	return res.Result.Value, nil
+	return &res.Result.Value, nil
 }
