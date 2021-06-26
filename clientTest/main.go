@@ -254,6 +254,21 @@ func tet11() {
 	//fmt.Println(newData)
 	fmt.Println(newData.Parsed.Info.Owner, newData.Parsed.Info.Mint)
 }
+
+func testGetTokenList() {
+	rawurl := "https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/src/tokens/solana.tokenlist.json"
+
+	cli := client.NewClient(rawurl)
+	//充值 验证地址必须为系统地址才可以
+	list, err := cli.GetTokenList(context.Background(), 101)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, t := range list {
+		fmt.Printf("%+v \n", t)
+	}
+}
 func main() {
-	tet11()
+	testGetTokenList()
 }
