@@ -7,7 +7,28 @@ type GetTokenAccountsByOwnerResponse struct {
 	Pubkey  string                 `json:"pubkey"`
 }
 
-func (s *Client) GetTokenAccountsByOwner(ctx context.Context, base58Addr, mint string) (*GetTokenAccountsByOwnerResponse, error) {
+type AccountDataByOwner struct {
+	Parsed struct {
+		Info struct {
+			IsNative    bool   `json:"isNative"`
+			Mint        string `json:"mint"`
+			Owner       string `json:"owner"`
+			State       string `json:"state"`
+			TokenAmount struct {
+				Amount         string  `json:"amount"`
+				Decimals       int     `json:"decimals"`
+				UiAmount       float64 `json:"uiAmount"`
+				UiAmountString string  `json:"uiAmountString"`
+			} `json:"tokenAmount"`
+		} `json:"info"`
+		Type string `json:"type"`
+	} `json:"parsed"`
+	Program string `json:"program"`
+	Space   int    `json:"space"`
+}
+
+func (s *Client) GetTokenAccountsByOwner(ctx context.Context, base58Addr, mint string) (*[]GetTokenAccountsByOwnerResponse, error) {
+	emptyResult := make([]GetTokenAccountsByOwnerResponse, 0)
 	res := struct {
 		GeneralResponse
 		Result struct {
@@ -21,13 +42,12 @@ func (s *Client) GetTokenAccountsByOwner(ctx context.Context, base58Addr, mint s
 		map[string]interface{}{"encoding": "jsonParsed"}}
 	err := s.request(ctx, "getTokenAccountsByOwner", config, &res)
 	if err != nil {
-		return &GetTokenAccountsByOwnerResponse{}, err
+		return &emptyResult, err
 	}
 
-	//TODO 这里只获取数组中的第一个元素，是否合适
 	if len(res.Result.Value) > 0 {
-		return &res.Result.Value[0], nil
+		return &res.Result.Value, nil
 	} else {
-		return &GetTokenAccountsByOwnerResponse{}, nil
+		return &emptyResult, nil
 	}
 }
