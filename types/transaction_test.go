@@ -3,6 +3,7 @@ package types
 import (
 	"encoding/hex"
 	"fmt"
+	"github.com/mr-tron/base58"
 	"reflect"
 	"testing"
 
@@ -68,10 +69,18 @@ func TestTransaction_Serialize(t *testing.T) {
 
 //反解交易
 func TestTransaction_Serialize11(t *testing.T) {
-	encodedStr := "0109d8663596704540757a0c5a2bab2dc49789670a141a1a51e216e42a0aec6e74d4be9db07c9ac24e2ec3d471dbb9a43453e94aa7fcc181e2c4c279817574ec00010001035f7ea8352a02923ba82eeef5c285cebe82d2c397a79e90269331791286019b9bed7e11dfeb0da4cd475a0b638b988b79e078551dc20afe1e7cbd0f2723fa5d0500000000000000000000000000000000000000000000000000000000000000001fa81ede66b1835ca84b534c6f9f292df845b20943b88108d048696b811943f101020200010c02000000c04d059908000000"
+	encodedStr := "02b3302b6fd89a72ab7e5e28ef91783c0d7a776c29ccae00c3ef651e3d5bf17521e78888317bb0a5663e7beb864de1ee729d56c188691b19b6613efa9541c07d041c212efdfa0b70dfb3e863cd8f607a773c56c52f73ac901af34c4a1f6c058f785df85d15b85754dfd1af5f027b3bccc76abeadfe01f9df2aeed6b8a9fd19140002010105f091a7f1d3a414f944a9cecf6bd0dab1cda1fec5c809860341d2403897f4285ed8ae77a0477191544e34285e5f1986232bfb1cef53f5b0138f7db33a432c221f26193c712a6f06efd4b732a46724b017252e0f60340c32e1c492f92af1143c577c201260fc8a7bd77e5c146bd61c1d55914156850ba81216224c2868f0e160be06ddf6e1d765a193d9cbe146ceeb79ac1cb485ed5f5b37913a8cf5857eff00a9f02f202f062feedd0d4b9c5e7ca76e95de561362f66aebd6e1fbda42ce6c3a370104030302010903c234000000000000"
 	test, _ := hex.DecodeString(encodedStr)
+	fmt.Println(base58.Encode(test))
 	trx := MustTransactionDeserialize(test)
-	fmt.Println(trx.Message.RecentBlockHash)
+
+	for i, sg := range trx.Signatures {
+		fmt.Printf("Signature:%d  %s\n", i, base58.Encode(sg))
+	}
+
+	for i, a := range trx.Message.Accounts {
+		fmt.Printf("Account:%d  %s\n", i, a.ToBase58())
+	}
 }
 
 func TestCreateRawTransaction(t *testing.T) {
