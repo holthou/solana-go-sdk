@@ -314,8 +314,27 @@ func TestGetTokenAccountsByOwner() {
 	}
 }
 
+func getHealth() {
+	list := []string{
+		"https://api.mainnet-beta.solana.com",
+		"http://122.248.192.182:8899",
+		"http://18.140.48.191:8899",
+	}
+
+	for _, rawurl := range list {
+		cs := client.NewClient(rawurl)
+		info, err := cs.GetHealth(context.Background())
+		if err != nil {
+			fmt.Println(rawurl, err)
+		} else {
+			fmt.Println(rawurl, info)
+		}
+	}
+}
+
 func main() {
 	//tet11()
-	TestGetTokenAccountsByOwner()
+	//TestGetTokenAccountsByOwner()
+	getHealth()
 
 }
