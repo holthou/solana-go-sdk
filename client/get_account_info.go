@@ -74,7 +74,10 @@ type GetAccountInfoResponse struct {
 //	RentEpoch  int    `json:"rentEpoch"`
 //}
 
-func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAccountInfoConfig) (*GetAccountInfoResponse, error) {
+func (s *Client) GetAccountInfo(ctx context.Context, account string) (*GetAccountInfoResponse, error) {
+	cfg := GetAccountInfoConfig{
+		Encoding: "jsonParsed",
+	}
 	res := struct {
 		GeneralResponse
 		Result struct {
@@ -82,6 +85,7 @@ func (s *Client) GetAccountInfo(ctx context.Context, account string, cfg GetAcco
 			Value   GetAccountInfoResponse `json:"value"`
 		} `json:"result"`
 	}{}
+
 	err := s.request(ctx, "getAccountInfo", []interface{}{account, cfg}, &res)
 	if err != nil {
 		return &GetAccountInfoResponse{}, err
