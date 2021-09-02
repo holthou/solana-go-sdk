@@ -40,6 +40,7 @@ type GetAccountInfoConfigDataSlice struct {
 	Length uint64 `json:"length"`
 }
 
+//这个结构体里面定义的信息不全，在data字段中，后期需要的话可以添加
 type GetAccountInfoResponse struct {
 	Lamports  uint64      `json:"lamports"`
 	Owner     string      `json:"owner"`

@@ -10,6 +10,13 @@ type GetTokenAccountsByOwnerResponse struct {
 type AccountDataByOwner struct {
 	Parsed struct {
 		Info struct {
+			Delegate        string `json:"delegate"`
+			DelegatedAmount struct {
+				Amount         string  `json:"amount"`
+				Decimals       int     `json:"decimals"`
+				UiAmount       float64 `json:"uiAmount"`
+				UiAmountString string  `json:"uiAmountString"`
+			} `json:"delegatedAmount"`
 			IsNative    bool   `json:"isNative"`
 			Mint        string `json:"mint"`
 			Owner       string `json:"owner"`
