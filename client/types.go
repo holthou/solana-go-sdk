@@ -24,6 +24,13 @@ type TransactionMeta struct {
 	PostTokenBalances []TokenBalance `json:"postTokenBalances"`
 	PreTokenBalances  []TokenBalance `json:"preTokenBalances"`
 	LogMessages       []string       `json:"logMesssages"`
+	Rewards           []struct {
+		Commission  interface{} `json:"commission"`
+		Lamports    int         `json:"lamports"`
+		PostBalance int         `json:"postBalance"`
+		Pubkey      string      `json:"pubkey"`
+		RewardType  string      `json:"rewardType"`
+	} `json:"rewards"`
 	InnerInstructions []struct {
 		Index        uint64        `json:"index"`
 		Instructions []Instruction `json:"instructions"`
