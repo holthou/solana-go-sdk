@@ -16,37 +16,18 @@ const (
 )
 
 type TokenInfo struct {
-	ChainId    int           `json:"chainId"`
-	Address    string        `json:"address"`
-	Symbol     string        `json:"symbol"`
-	Name       string        `json:"name"`
-	Decimals   int           `json:"decimals"`
-	LogoURI    string        `json:"logoURI"`
-	Tags       []interface{} `json:"tags"`
-	Extensions struct {
-		Website      string `json:"website"`
-		SerumV3Usdc  string `json:"serumV3Usdc"`
-		SerumV3Usdt  string `json:"serumV3Usdt"`
-		CoingeckoId  string `json:"coingeckoId"`
-		Waterfallbot string `json:"waterfallbot"`
-	} `json:"extensions"`
+	ChainId  int    `json:"chainId"`
+	Address  string `json:"address"`
+	Symbol   string `json:"symbol"`
+	Name     string `json:"name"`
+	Decimals int    `json:"decimals"`
+	LogoURI  string `json:"logoURI"`
 }
 
 //获取指定链的Token list
 func (s *Client) GetTokenList(ctx context.Context, envId int) ([]*TokenInfo, error) {
 	result := struct {
-		Name     string   `json:"name"`
-		LogoURI  string   `json:"logoURI"`
-		Keywords []string `json:"keywords"`
-		Tags     struct {
-		} `json:"tags"`
-		Timestamp string      `json:"timestamp"`
-		Tokens    []TokenInfo `json:"tokens"`
-		Version   struct {
-			Major int `json:"major"`
-			Minor int `json:"minor"`
-			Patch int `json:"patch"`
-		} `json:"version"`
+		Tokens []TokenInfo `json:"tokens"`
 	}{}
 	// GET request
 	req, err := http.NewRequestWithContext(ctx, "GET", s.endpoint, nil)

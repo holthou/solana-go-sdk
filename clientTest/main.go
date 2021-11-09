@@ -228,10 +228,7 @@ func tet11() {
 	//toPublicKey := "2bj53paPfbLXFBruju2XHEfdrdfQjdD1d1iVwAKyGRCS"
 	cs := client.NewClient(rawurl)
 	//充值 验证地址必须为系统地址才可以
-	cfg := client.GetAccountInfoConfig{
-		Encoding: "jsonParsed",
-	}
-	info, _ := cs.GetAccountInfo(context.Background(), toPublicKey, cfg)
+	info, _ := cs.GetAccountInfo(context.Background(), toPublicKey)
 	tt, ok := (info.Data).(Date111)
 	if ok {
 		fmt.Println(tt.Parsed.Info.Owner, tt.Parsed.Info.Mint)
