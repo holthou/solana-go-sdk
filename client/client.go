@@ -979,3 +979,45 @@ func (c *Client) GetTokenAccountsByOwner(ctx context.Context, base58Addr string)
 	}
 	return m, err
 }
+
+func (c *Client) GetHealth(ctx context.Context) (string, error) {
+	res, err := c.RpcClient.GetHealth(ctx)
+	err = checkJsonRpcResponse(res, err)
+	if err != nil {
+		return "", err
+	}
+	return res.Result, nil
+}
+
+func (c *Client) GetBlockWithConfig(ctx context.Context, slot uint64, config rpc.GetBlockConfig) (GetBlockResponse, error) {
+	res, err := c.RpcClient.GetBlockWithConfig(
+		ctx,
+		slot,
+		config,
+	)
+	err = checkJsonRpcResponse(res, err)
+	if err != nil {
+		return GetBlockResponse{}, err
+	}
+	return getBlock(res)
+}
+
+func (c *Client) GetTokenAccountsByOwnerWithMint(ctx context.Context, base58Addr, mint string) (rpc.GetProgramAccounts, error) {
+	getTokenAccountsByOwnerResponse, err := c.RpcClient.GetTokenAccountsByOwnerWithConfig(
+		ctx,
+		base58Addr,
+		rpc.GetTokenAccountsByOwnerConfigFilter{
+			Mint:      mint,
+			//ProgramId: common.TokenProgramID.ToBase58(),
+		},
+		rpc.GetTokenAccountsByOwnerConfig{
+			Encoding: rpc.AccountEncodingBase64,
+		},
+	)
+	err = checkJsonRpcResponse(getTokenAccountsByOwnerResponse, err)
+	if err != nil {
+		return nil, err
+	}
+
+	return getTokenAccountsByOwnerResponse.Result.Value, err
+}
