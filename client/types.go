@@ -40,6 +40,7 @@ type TransactionMeta struct {
 }
 
 type TransactionWithMeta struct {
+	Version     interface{}     `json:"version"` //临时方案，改动最小
 	Meta        TransactionMeta `json:"meta"`
 	Transaction Transaction     `json:"transaction"`
 }
