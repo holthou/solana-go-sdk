@@ -484,8 +484,9 @@ func (c *Client) GetTransactionWithConfig(ctx context.Context, txhash string, cf
 		ctx,
 		txhash,
 		rpc.GetTransactionConfig{
-			Encoding:   rpc.TransactionEncodingBase64,
-			Commitment: cfg.Commitment,
+			Encoding:                       rpc.TransactionEncodingBase64,
+			Commitment:                     cfg.Commitment,
+			MaxSupportedTransactionVersion: cfg.MaxSupportedTransactionVersion,
 		},
 	)
 	err = checkJsonRpcResponse(res, err)

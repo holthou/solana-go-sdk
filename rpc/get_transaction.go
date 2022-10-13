@@ -71,8 +71,9 @@ type TransactionLoadedAddresses struct {
 
 // GetTransactionConfig is a option config for `getTransaction`
 type GetTransactionConfig struct {
-	Encoding   TransactionEncoding `json:"encoding,omitempty"`
-	Commitment Commitment          `json:"commitment,omitempty"` // "processed" is not supported
+	Encoding                       TransactionEncoding `json:"encoding,omitempty"`
+	Commitment                     Commitment          `json:"commitment,omitempty"`                     // "processed" is not supported
+	MaxSupportedTransactionVersion *uint8              `json:"maxSupportedTransactionVersion,omitempty"` // default: nil legacy only
 }
 
 // GetTransaction returns transaction details for a confirmed transaction
