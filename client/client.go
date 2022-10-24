@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/mr-tron/base58"
 	"github.com/portto/solana-go-sdk/common"
 	"github.com/portto/solana-go-sdk/program/token"
 	"github.com/portto/solana-go-sdk/rpc"
@@ -433,26 +432,26 @@ func (c *Client) GetSlotWithConfig(ctx context.Context, cfg rpc.GetSlotConfig) (
 
 type GetTransactionResponse struct {
 	Slot        uint64
-	Meta        *TransactionMeta
+	Meta        *rpc.TransactionMeta
 	Transaction types.Transaction
 	BlockTime   *int64
 }
 
-type TransactionMeta struct {
-	Err               any
-	Fee               uint64
-	PreBalances       []int64
-	PostBalances      []int64
-	PreTokenBalances  []rpc.TransactionMetaTokenBalance
-	PostTokenBalances []rpc.TransactionMetaTokenBalance
-	LogMessages       []string
-	InnerInstructions []TransactionMetaInnerInstruction
-}
+//type TransactionMeta struct {
+//	Err               any
+//	Fee               uint64
+//	PreBalances       []int64
+//	PostBalances      []int64
+//	PreTokenBalances  []rpc.TransactionMetaTokenBalance
+//	PostTokenBalances []rpc.TransactionMetaTokenBalance
+//	LogMessages       []string
+//	InnerInstructions []TransactionMetaInnerInstruction
+//}
 
-type TransactionMetaInnerInstruction struct {
-	Index        uint64
-	Instructions []types.CompiledInstruction
-}
+//type TransactionMetaInnerInstruction struct {
+//	Index        uint64
+//	Instructions []types.CompiledInstruction
+//}
 
 // GetTransaction returns transaction details for a confirmed transaction
 func (c *Client) GetTransaction(ctx context.Context, txhash string) (*GetTransactionResponse, error) {
@@ -520,47 +519,11 @@ func getTransaction(res rpc.JsonRpcResponse[*rpc.GetTransaction]) (GetTransactio
 		return GetTransactionResponse{}, fmt.Errorf("failed to deserialize transaction, err: %v", err)
 	}
 
-	var transactionMeta *TransactionMeta
-	if res.Result.Meta != nil {
-		innerInstructions := make([]TransactionMetaInnerInstruction, 0, len(res.Result.Meta.InnerInstructions))
-		for _, metaInnerInstruction := range res.Result.Meta.InnerInstructions {
-			compiledInstructions := make([]types.CompiledInstruction, 0, len(metaInnerInstruction.Instructions))
-			for _, innerInstruction := range metaInnerInstruction.Instructions {
-				var data []byte
-				if len(innerInstruction.Data) > 0 {
-					data, err = base58.Decode(innerInstruction.Data)
-					if err != nil {
-						return GetTransactionResponse{}, fmt.Errorf("failed to base58 decode data, data: %v, err: %v", innerInstruction.Data, err)
-					}
-				}
-				compiledInstructions = append(compiledInstructions, types.CompiledInstruction{
-					ProgramIDIndex: innerInstruction.ProgramIDIndex,
-					Accounts:       innerInstruction.Accounts,
-					Data:           data,
-				})
-			}
-			innerInstructions = append(innerInstructions, TransactionMetaInnerInstruction{
-				Index:        metaInnerInstruction.Index,
-				Instructions: compiledInstructions,
-			})
-		}
-		transactionMeta = &TransactionMeta{
-			Err:               res.Result.Meta.Err,
-			Fee:               res.Result.Meta.Fee,
-			PreBalances:       res.Result.Meta.PreBalances,
-			PostBalances:      res.Result.Meta.PostBalances,
-			PreTokenBalances:  res.Result.Meta.PreTokenBalances,
-			PostTokenBalances: res.Result.Meta.PostTokenBalances,
-			LogMessages:       res.Result.Meta.LogMessages,
-			InnerInstructions: innerInstructions,
-		}
-	}
-
 	return GetTransactionResponse{
 		Slot:        res.Result.Slot,
 		BlockTime:   res.Result.BlockTime,
 		Transaction: tx,
-		Meta:        transactionMeta,
+		Meta:        res.Result.Meta,
 	}, nil
 }
 
@@ -575,7 +538,7 @@ type GetBlockResponse struct {
 }
 
 type GetBlockTransaction struct {
-	Meta        *TransactionMeta
+	Meta        *rpc.TransactionMeta
 	Transaction types.Transaction
 }
 
@@ -615,45 +578,9 @@ func getBlock(res rpc.JsonRpcResponse[rpc.GetBlock]) (GetBlockResponse, error) {
 			return GetBlockResponse{}, fmt.Errorf("failed to deserialize transaction, err: %v", err)
 		}
 
-		var transactionMeta *TransactionMeta
-		if rTx.Meta != nil {
-			innerInstructions := make([]TransactionMetaInnerInstruction, 0, len(rTx.Meta.InnerInstructions))
-			for _, metaInnerInstruction := range rTx.Meta.InnerInstructions {
-				compiledInstructions := make([]types.CompiledInstruction, 0, len(metaInnerInstruction.Instructions))
-				for _, innerInstruction := range metaInnerInstruction.Instructions {
-					var data []byte
-					if len(innerInstruction.Data) > 0 {
-						data, err = base58.Decode(innerInstruction.Data)
-						if err != nil {
-							return GetBlockResponse{}, fmt.Errorf("failed to base58 decode data, data: %v, err: %v", innerInstruction.Data, err)
-						}
-					}
-					compiledInstructions = append(compiledInstructions, types.CompiledInstruction{
-						ProgramIDIndex: innerInstruction.ProgramIDIndex,
-						Accounts:       innerInstruction.Accounts,
-						Data:           data,
-					})
-				}
-				innerInstructions = append(innerInstructions, TransactionMetaInnerInstruction{
-					Index:        metaInnerInstruction.Index,
-					Instructions: compiledInstructions,
-				})
-			}
-			transactionMeta = &TransactionMeta{
-				Err:               rTx.Meta.Err,
-				Fee:               rTx.Meta.Fee,
-				PreBalances:       rTx.Meta.PreBalances,
-				PostBalances:      rTx.Meta.PostBalances,
-				PreTokenBalances:  rTx.Meta.PreTokenBalances,
-				PostTokenBalances: rTx.Meta.PostTokenBalances,
-				LogMessages:       rTx.Meta.LogMessages,
-				InnerInstructions: innerInstructions,
-			}
-		}
-
 		txs = append(txs,
 			GetBlockTransaction{
-				Meta:        transactionMeta,
+				Meta:        rTx.Meta,
 				Transaction: tx,
 			},
 		)
