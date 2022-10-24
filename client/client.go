@@ -207,7 +207,7 @@ func (c *Client) rpcMultipleAccountsToClientAccountInfos(values []rpc.AccountInf
 		if !ok {
 			return []AccountInfo{}, fmt.Errorf("failed to cast raw response to []any")
 		}
-		if data[1] != string(rpc.AccountEncodingBase58) {
+		if data[1] != string(rpc.AccountEncodingBase64) {
 			return []AccountInfo{}, fmt.Errorf("encoding mistmatch")
 		}
 		rawData, err := base64.StdEncoding.DecodeString(data[0].(string))
@@ -1009,7 +1009,7 @@ func (c *Client) GetTokenAccountsByOwnerWithMint(ctx context.Context, base58Addr
 		base58Addr,
 		rpc.GetTokenAccountsByOwnerConfigFilter{
 			Mint:      mint,
-			//ProgramId: common.TokenProgramID.ToBase58(),
+			ProgramId: common.TokenProgramID.ToBase58(),
 		},
 		rpc.GetTokenAccountsByOwnerConfig{
 			Encoding: rpc.AccountEncodingBase64,
