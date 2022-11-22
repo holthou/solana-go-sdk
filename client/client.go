@@ -935,8 +935,8 @@ func (c *Client) GetTokenAccountsByOwnerWithMint(ctx context.Context, base58Addr
 		ctx,
 		base58Addr,
 		rpc.GetTokenAccountsByOwnerConfigFilter{
-			Mint:      mint,
-			ProgramId: common.TokenProgramID.ToBase58(),
+			Mint: mint,
+			//ProgramId: common.TokenProgramID.ToBase58(),
 		},
 		rpc.GetTokenAccountsByOwnerConfig{
 			Encoding: rpc.AccountEncodingBase64,
