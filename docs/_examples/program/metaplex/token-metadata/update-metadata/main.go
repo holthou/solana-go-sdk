@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/portto/solana-go-sdk/client"
-	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/pkg/pointer"
-	"github.com/portto/solana-go-sdk/program/metaplex/token_metadata"
-	"github.com/portto/solana-go-sdk/rpc"
-	"github.com/portto/solana-go-sdk/types"
+	"github.com/blocto/solana-go-sdk/client"
+	"github.com/blocto/solana-go-sdk/common"
+	"github.com/blocto/solana-go-sdk/pkg/pointer"
+	"github.com/blocto/solana-go-sdk/program/metaplex/token_metadata"
+	"github.com/blocto/solana-go-sdk/rpc"
+	"github.com/blocto/solana-go-sdk/types"
 )
 
 // FUarP2p5EnxD66vVDL4PWRoWMzA56ZVHG24hpEDFShEz
@@ -22,13 +22,13 @@ var alice, _ = types.AccountFromBase58("4voSPg3tYuWbKzimpQK9EbXHmuyy5fUrtXvpLDML
 func main() {
 	c := client.NewClient(rpc.DevnetRPCEndpoint)
 
-	// mint address
+	// NFT
 	nft := common.PublicKeyFromString("FK8eFRgmqewUzr7R6pYUxSPnSNusYmkhAV4e3pUJYdCd")
 
+	// get the metadata account address
 	tokenMetadataPubkey, err := token_metadata.GetTokenMetaPubkey(nft)
 	if err != nil {
 		log.Fatalf("failed to find a valid token metadata, err: %v", err)
-
 	}
 
 	recentBlockhashResponse, err := c.GetLatestBlockhash(context.Background())
@@ -42,10 +42,10 @@ func main() {
 			FeePayer:        feePayer.PublicKey,
 			RecentBlockhash: recentBlockhashResponse.Blockhash,
 			Instructions: []types.Instruction{
-				token_metadata.UpdateMetadataAccount(token_metadata.UpdateMetadataAccountParam{
+				token_metadata.UpdateMetadataAccountV2(token_metadata.UpdateMetadataAccountV2Param{
 					MetadataAccount: tokenMetadataPubkey,
 					UpdateAuthority: feePayer.PublicKey,
-					Data: &token_metadata.Data{
+					Data: &token_metadata.DataV2{
 						Name:                 "Fake Fake SMS #1355",
 						Symbol:               "FFSMB",
 						Uri:                  "https://34c7ef24f4v2aejh75xhxy5z6ars4xv47gpsdrei6fiowptk2nqq.arweave.net/3wXyF1wvK6ARJ_9ue-O58CMuXrz5nyHEiPFQ6z5q02E",
@@ -60,6 +60,7 @@ func main() {
 					},
 					NewUpdateAuthority:  &alice.PublicKey,
 					PrimarySaleHappened: pointer.Get[bool](true),
+					IsMutable:           pointer.Get[bool](true),
 				}),
 			},
 		}),

@@ -6,11 +6,7 @@ import (
 
 type GetBalanceResponse JsonRpcResponse[GetBalance]
 
-// GetBalance is a part of raw rpc response of `getBalance`
-type GetBalance struct {
-	Context Context `json:"context"`
-	Value   uint64  `json:"value"`
-}
+type GetBalance ValueWithContext[uint64]
 
 // GetBalanceConfig is a option config for `getBalance`
 type GetBalanceConfig struct {
@@ -18,16 +14,11 @@ type GetBalanceConfig struct {
 }
 
 // GetBalance returns the SOL balance
-func (c *RpcClient) GetBalance(ctx context.Context, base58Addr string) (JsonRpcResponse[GetBalance], error) {
-	return c.processGetBalance(c.Call(ctx, "getBalance", base58Addr))
+func (c *RpcClient) GetBalance(ctx context.Context, base58Addr string) (JsonRpcResponse[ValueWithContext[uint64]], error) {
+	return call[JsonRpcResponse[ValueWithContext[uint64]]](c, ctx, "getBalance", base58Addr)
 }
 
 // GetBalanceWithConfig returns the SOL balance
-func (c *RpcClient) GetBalanceWithConfig(ctx context.Context, base58Addr string, cfg GetBalanceConfig) (JsonRpcResponse[GetBalance], error) {
-	return c.processGetBalance(c.Call(ctx, "getBalance", base58Addr, cfg))
-}
-
-func (c *RpcClient) processGetBalance(body []byte, rpcErr error) (res JsonRpcResponse[GetBalance], err error) {
-	err = c.processRpcCall(body, rpcErr, &res)
-	return
+func (c *RpcClient) GetBalanceWithConfig(ctx context.Context, base58Addr string, cfg GetBalanceConfig) (JsonRpcResponse[ValueWithContext[uint64]], error) {
+	return call[JsonRpcResponse[ValueWithContext[uint64]]](c, ctx, "getBalance", base58Addr, cfg)
 }

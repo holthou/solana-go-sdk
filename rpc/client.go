@@ -30,6 +30,17 @@ type JsonRpcResponse[T any] struct {
 	Error   *JsonRpcError `json:"error,omitempty"`
 }
 
+func (j JsonRpcResponse[T]) GetResult() T {
+	return j.Result
+}
+
+func (j JsonRpcResponse[T]) GetError() error {
+	if j.Error == nil {
+		return nil
+	}
+	return j.Error
+}
+
 type JsonRpcError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -44,6 +55,11 @@ func (e *JsonRpcError) Error() string {
 
 	// ideally, it should never reach here
 	return fmt.Sprintf("failed to marshal JsonRpcError, err: %v, code: %v, message: %v, data: %v", err, e.Code, e.Message, e.Data)
+}
+
+type ValueWithContext[T any] struct {
+	Context Context `json:"context"`
+	Value   T       `json:"value"`
 }
 
 type RpcClient struct {
@@ -118,13 +134,20 @@ func preparePayload(params []any) ([]byte, error) {
 	return j, nil
 }
 
-func (c *RpcClient) processRpcCall(body []byte, rpcErr error, res any) error {
-	if rpcErr != nil {
-		return fmt.Errorf("rpc: call error, err: %v, body: %v", rpcErr, string(body))
-	}
-	err := json.Unmarshal(body, &res)
+func call[T any](c *RpcClient, ctx context.Context, params ...any) (T, error) {
+	var output T
+
+	// rpc call
+	body, err := c.Call(ctx, params...)
 	if err != nil {
-		return fmt.Errorf("rpc: failed to json decode body, err: %v", err)
+		return output, fmt.Errorf("rpc: call error, err: %v, body: %v", err, string(body))
 	}
-	return nil
+
+	// transfer data
+	err = json.Unmarshal(body, &output)
+	if err != nil {
+		return output, fmt.Errorf("rpc: failed to json decode body, err: %v", err)
+	}
+
+	return output, nil
 }

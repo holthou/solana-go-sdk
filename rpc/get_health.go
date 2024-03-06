@@ -1,16 +1,12 @@
 package rpc
 
-import "context"
+import (
+	"context"
+)
 
-// GetHealthResponse is a full raw rpc response of `getVersion`
 type GetHealthResponse JsonRpcResponse[string]
 
-// GetVersion returns the current solana versions running on the node
+// GetHealthResponse returns the current health of the node. A healthy node is one that is within HEALTH_CHECK_SLOT_DISTANCE slots of the latest cluster confirmed slot.
 func (c *RpcClient) GetHealth(ctx context.Context) (JsonRpcResponse[string], error) {
-	return c.processGetHealth(c.Call(ctx, "getHealth"))
-}
-
-func (c *RpcClient) processGetHealth(body []byte, rpcErr error) (res JsonRpcResponse[string], err error) {
-	err = c.processRpcCall(body, rpcErr, &res)
-	return
+	return call[JsonRpcResponse[string]](c, ctx, "getHealth")
 }

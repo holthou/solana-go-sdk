@@ -3,7 +3,7 @@ package types
 import (
 	"testing"
 
-	"github.com/portto/solana-go-sdk/common"
+	"github.com/blocto/solana-go-sdk/common"
 )
 
 func BenchmarkSerializeLegacyMessage(b *testing.B) {
@@ -66,10 +66,12 @@ func BenchmarkSerializeV0Message(b *testing.B) {
 				Data:           []byte{2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
 			},
 		},
-		AddressLookupTable: &CompiledAddressLookupTable{
-			AccountKey:      common.PublicKeyFromString("HEhDGuxaxGr9LuNtBdvbX2uggyAKoxYgHFaAiqxVu8UY"),
-			WritableIndexes: []uint8{1},
-			ReadonlyIndexes: []uint8{},
+		AddressLookupTables: []CompiledAddressLookupTable{
+			{
+				AccountKey:      common.PublicKeyFromString("HEhDGuxaxGr9LuNtBdvbX2uggyAKoxYgHFaAiqxVu8UY"),
+				WritableIndexes: []uint8{1},
+				ReadonlyIndexes: []uint8{},
+			},
 		},
 	}
 	b.ResetTimer()

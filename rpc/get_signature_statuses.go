@@ -6,11 +6,7 @@ import (
 
 type GetSignatureStatusesResponse JsonRpcResponse[GetSignatureStatuses]
 
-// GetSignatureStatusesResult is a part of raw rpc response of `getSignatureStatuses`
-type GetSignatureStatuses struct {
-	Context Context           `json:"context"`
-	Value   SignatureStatuses `json:"value"`
-}
+type GetSignatureStatuses ValueWithContext[SignatureStatuses]
 
 type SignatureStatus struct {
 	Slot               uint64      `json:"slot"`
@@ -27,16 +23,11 @@ type GetSignatureStatusesConfig struct {
 }
 
 // GetSignatureStatuses returns the SOL balance
-func (c *RpcClient) GetSignatureStatuses(ctx context.Context, signatures []string) (JsonRpcResponse[GetSignatureStatuses], error) {
-	return c.processGetSignatureStatuses(c.Call(ctx, "getSignatureStatuses", signatures))
+func (c *RpcClient) GetSignatureStatuses(ctx context.Context, signatures []string) (JsonRpcResponse[ValueWithContext[SignatureStatuses]], error) {
+	return call[JsonRpcResponse[ValueWithContext[SignatureStatuses]]](c, ctx, "getSignatureStatuses", signatures)
 }
 
 // GetSignatureStatusesWithConfig returns the SOL balance
-func (c *RpcClient) GetSignatureStatusesWithConfig(ctx context.Context, signatures []string, cfg GetSignatureStatusesConfig) (JsonRpcResponse[GetSignatureStatuses], error) {
-	return c.processGetSignatureStatuses(c.Call(ctx, "getSignatureStatuses", signatures, cfg))
-}
-
-func (c *RpcClient) processGetSignatureStatuses(body []byte, rpcErr error) (res JsonRpcResponse[GetSignatureStatuses], err error) {
-	err = c.processRpcCall(body, rpcErr, &res)
-	return
+func (c *RpcClient) GetSignatureStatusesWithConfig(ctx context.Context, signatures []string, cfg GetSignatureStatusesConfig) (JsonRpcResponse[ValueWithContext[SignatureStatuses]], error) {
+	return call[JsonRpcResponse[ValueWithContext[SignatureStatuses]]](c, ctx, "getSignatureStatuses", signatures, cfg)
 }

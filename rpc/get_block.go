@@ -12,26 +12,8 @@ type GetBlock struct {
 	ParentSlot        uint64                `json:"parentSlot"`
 	Transactions      []GetBlockTransaction `json:"transactions"`
 	Signatures        []string              `json:"signatures"`
-	Rewards           []GetBlockReward      `json:"rewards"`
+	Rewards           []Reward              `json:"rewards"`
 }
-
-type GetBlockReward struct {
-	Pubkey       string             `json:"pubkey"`
-	Lamports     int64              `json:"lamports"`
-	PostBalances uint64             `json:"postBalance"`
-	RewardType   GetBlockRewardType `json:"rewardType"`
-	Commission   *uint8             `json:"commission"`
-}
-
-type GetBlockRewardType string
-
-const (
-	GetBlockRewardTypeNone    GetBlockRewardType = ""
-	GetBlockRewardTypeFee     GetBlockRewardType = "fee"
-	GetBlockRewardTypeRent    GetBlockRewardType = "rent"
-	GetBlockRewardTypeVoting  GetBlockRewardType = "voting"
-	GetBlockRewardTypeStaking GetBlockRewardType = "staking"
-)
 
 type GetBlockTransaction struct {
 	Transaction any              `json:"transaction"`
@@ -65,16 +47,11 @@ const (
 )
 
 // GetBlock returns identity and transaction information about a confirmed block in the ledger
-func (c *RpcClient) GetBlock(ctx context.Context, slot uint64) (JsonRpcResponse[GetBlock], error) {
-	return c.processGetBlock(c.Call(ctx, "getBlock", slot))
+func (c *RpcClient) GetBlock(ctx context.Context, slot uint64) (JsonRpcResponse[*GetBlock], error) {
+	return call[JsonRpcResponse[*GetBlock]](c, ctx, "getBlock", slot)
 }
 
 // GetBlockWithConfig returns identity and transaction information about a confirmed block in the ledger
-func (c *RpcClient) GetBlockWithConfig(ctx context.Context, slot uint64, cfg GetBlockConfig) (JsonRpcResponse[GetBlock], error) {
-	return c.processGetBlock(c.Call(ctx, "getBlock", slot, cfg))
-}
-
-func (c *RpcClient) processGetBlock(body []byte, rpcErr error) (res JsonRpcResponse[GetBlock], err error) {
-	err = c.processRpcCall(body, rpcErr, &res)
-	return
+func (c *RpcClient) GetBlockWithConfig(ctx context.Context, slot uint64, cfg GetBlockConfig) (JsonRpcResponse[*GetBlock], error) {
+	return call[JsonRpcResponse[*GetBlock]](c, ctx, "getBlock", slot, cfg)
 }

@@ -8,7 +8,7 @@ export default defineUserConfig<DefaultThemeOptions>({
   title: "Solana Development With Go",
   plugins: [["@snippetors/vuepress-plugin-code-copy", { color: "#BBBBBB" }]],
   themeConfig: {
-    navbar: [{ text: "GitHub", link: "https://github.com/portto/solana-go-sdk" }],
+    navbar: [{ text: "GitHub", link: "https://github.com/blocto/solana-go-sdk" }],
     locales: {
       "/": {
         selectLanguageName: "English",
@@ -68,6 +68,28 @@ export default defineUserConfig<DefaultThemeOptions>({
             text: "RPC",
             children: [
               { text: "Get Signatures For Address", link: "/rpc/get-signatures-for-address" },
+            ],
+          },
+          {
+            text: "Program",
+            children: [
+              {
+                text: "101",
+                children: [
+                  { text: "Hello", link: "/programs/101/hello" },
+                  { text: "Accounts", link: "/programs/101/accounts" },
+                  { text: "Data", link: "/programs/101/data" },
+                ],
+              },
+              {
+                text: "Stake",
+                children: [
+                  { text: "Initialize Account", link: "/programs/stake/initialize-account" },
+                  { text: "Delegate (stake)", link: "/programs/stake/delegate" },
+                  { text: "Deactivate (unstake)", link: "/programs/stake/deactivate" },
+                  { text: "Withdraw", link: "/programs/stake/withdraw" },
+                ],
+              },
             ],
           },
         ],

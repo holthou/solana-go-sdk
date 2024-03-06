@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/portto/solana-go-sdk/common"
+	"github.com/blocto/solana-go-sdk/common"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -101,6 +101,7 @@ func TestTransactionDeserialize(t *testing.T) {
 							Data:           []byte{2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0},
 						},
 					},
+					AddressLookupTables: []CompiledAddressLookupTable{},
 				},
 			},
 			wantErr: false,
@@ -139,6 +140,7 @@ func TestTransactionDeserialize(t *testing.T) {
 							Data:           []byte{2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0},
 						},
 					},
+					AddressLookupTables: []CompiledAddressLookupTable{},
 				},
 			},
 			wantErr: false,

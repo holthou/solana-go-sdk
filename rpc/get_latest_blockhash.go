@@ -6,10 +6,7 @@ import (
 
 type GetLatestBlockhashResponse JsonRpcResponse[GetLatestBlockhash]
 
-type GetLatestBlockhash struct {
-	Context Context                 `json:"context"`
-	Value   GetLatestBlockhashValue `json:"value"`
-}
+type GetLatestBlockhash ValueWithContext[GetLatestBlockhashValue]
 
 // GetLatestBlockhashResult is a part of raw rpc response of `getLatestBlockhash`
 type GetLatestBlockhashValue struct {
@@ -24,17 +21,12 @@ type GetLatestBlockhashConfig struct {
 
 // NEW: This method is only available in solana-core v1.9 or newer. Please use getRecentBlockhash for solana-core v1.8
 // GetLatestBlockhash returns the latest blockhash
-func (c *RpcClient) GetLatestBlockhash(ctx context.Context) (JsonRpcResponse[GetLatestBlockhash], error) {
-	return c.processGetLatestBlockhash(c.Call(ctx, "getLatestBlockhash"))
+func (c *RpcClient) GetLatestBlockhash(ctx context.Context) (JsonRpcResponse[ValueWithContext[GetLatestBlockhashValue]], error) {
+	return call[JsonRpcResponse[ValueWithContext[GetLatestBlockhashValue]]](c, ctx, "getLatestBlockhash")
 }
 
 // NEW: This method is only available in solana-core v1.9 or newer. Please use getRecentBlockhash for solana-core v1.8
 // GetLatestBlockhashWithConfig returns the latest blockhash
-func (c *RpcClient) GetLatestBlockhashWithConfig(ctx context.Context, cfg GetLatestBlockhashConfig) (JsonRpcResponse[GetLatestBlockhash], error) {
-	return c.processGetLatestBlockhash(c.Call(ctx, "getLatestBlockhash", cfg))
-}
-
-func (c *RpcClient) processGetLatestBlockhash(body []byte, rpcErr error) (res JsonRpcResponse[GetLatestBlockhash], err error) {
-	err = c.processRpcCall(body, rpcErr, &res)
-	return
+func (c *RpcClient) GetLatestBlockhashWithConfig(ctx context.Context, cfg GetLatestBlockhashConfig) (JsonRpcResponse[ValueWithContext[GetLatestBlockhashValue]], error) {
+	return call[JsonRpcResponse[ValueWithContext[GetLatestBlockhashValue]]](c, ctx, "getLatestBlockhash", cfg)
 }

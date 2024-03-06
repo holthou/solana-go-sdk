@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/blocto/solana-go-sdk/common"
 	"github.com/near/borsh-go"
-	"github.com/portto/solana-go-sdk/common"
 )
 
 const EDITION_MARKER_BIT_SIZE uint64 = 248
@@ -71,6 +71,7 @@ type Metadata struct {
 	Collection          *Collection
 	Uses                *Uses
 	CollectionDetails   *CollectionDetails
+	ProgrammableConfig  *ProgrammableConfig
 }
 
 type TokenStandard borsh.Enum
@@ -80,6 +81,7 @@ const (
 	FungibleAsset
 	Fungible
 	NonFungibleEdition
+	ProgrammableNonFungible
 )
 
 type Collection struct {
@@ -108,6 +110,15 @@ type CollectionDetails struct {
 
 type CollectionDetailsV1 struct {
 	Size uint64
+}
+
+type ProgrammableConfig struct {
+	Enum borsh.Enum `borsh_enum:"true"`
+	V1   ProgrammableConfigV1
+}
+
+type ProgrammableConfigV1 struct {
+	RuleSet *common.PublicKey
 }
 
 func MetadataDeserialize(data []byte) (Metadata, error) {
