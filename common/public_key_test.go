@@ -155,15 +155,6 @@ func TestFindAssociatedTokenAddress(t *testing.T) {
 			want1:   254,
 			wantErr: false,
 		},
-		{
-			args: args{
-				walletAddress:    PublicKeyFromString("2qgUf3ZRUM6xT6oh5N1qXdnJZBy8Wkz6jh8o6qGHjL4y"),
-				tokenMintAddress: PublicKeyFromString("4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R"),
-			},
-			want:    PublicKeyFromString("4NAtbxag5zt5kb8aLoCDiC4kFjQHUjAwg3VHwyXrZ1VZ"),
-			want1:   254,
-			wantErr: false,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

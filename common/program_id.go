@@ -1,10 +1,6 @@
 package common
 
 var (
-	SystemProgramAddr                    = "11111111111111111111111111111111"
-	TokenProgramAddr                     = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
-	SPLAssociatedTokenAccountProgramAddr = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
-
 	SystemProgramID                    = PublicKeyFromString("11111111111111111111111111111111")
 	ConfigProgramID                    = PublicKeyFromString("Config1111111111111111111111111111111111111")
 	StakeProgramID                     = PublicKeyFromString("Stake11111111111111111111111111111111111111")

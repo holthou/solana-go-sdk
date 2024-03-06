@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"container/list"
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/portto/solana-go-sdk/client"
+	"github.com/portto/solana-go-sdk/rpc"
 	"io"
 	"os"
 	"strconv"
@@ -23,7 +23,7 @@ var arg = map[string]interface{}{
 	"commitment":         "finalized",
 }
 
-//两个线程分别从节点获取块数据，对比数据是否一致，验证空块情况
+// 两个线程分别从节点获取块数据，对比数据是否一致，验证空块情况
 func getAndSaveFile() {
 
 	go func() {
@@ -45,17 +45,16 @@ func getAndSaveFile() {
 			}
 
 			for i := curSlot - 1; i < slot; i++ {
-				params := []interface{}{i, arg}
-				block, err := client.GetConfirmedBlock(context.Background(), params...)
+				block, err := client.GetBlock(context.Background(), i)
 				if err != nil {
 					fmt.Errorf("GetConfirmedBlock", err)
 					break
 				}
 				var str string
 				if block.Blockhash == "" {
-					str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", i, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+					str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", i, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 				} else {
-					str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d\n", i, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+					str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d\n", i, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 				}
 				fmt.Print("no ->" + str)
 				file.WriteString(str)
@@ -81,17 +80,16 @@ func getAndSaveFile() {
 		slot -= 20
 
 		for i := curSlot - 1; i < slot; i++ {
-			params := []interface{}{i, arg}
-			block, err := client.GetConfirmedBlock(context.Background(), params...)
+			block, err := client.GetBlock(context.Background(), i)
 			if err != nil {
 				fmt.Errorf("GetConfirmedBlock", err)
 				break
 			}
 			var str string
 			if block.Blockhash == "" {
-				str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", i, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+				str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", i, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 			} else {
-				str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d\n", i, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+				str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d\n", i, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 			}
 			fmt.Print("delay ->" + str)
 			file.WriteString(str)
@@ -150,17 +148,16 @@ func checkEmptyBlock() {
 		intNum, _ := strconv.Atoi(i.Value.(string))
 		height := uint64(intNum)
 
-		params := []interface{}{height, arg}
-		block, err := client.GetConfirmedBlock(context.Background(), params...)
+		block, err := client.GetBlock(context.Background(), height)
 		if err != nil {
 			fmt.Println("GetConfirmedBlock", err)
 			continue
 		}
 		var str string
 		if block.Blockhash == "" {
-			str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", height, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+			str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", height, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 		} else {
-			str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d\n", height, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+			str = fmt.Sprintf("slot:%d ParentSLot:%d PreviousHash:%s size:%d\n", height, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 		}
 		fmt.Print(str)
 	}
@@ -176,11 +173,9 @@ func checkBlock() {
 			break
 		}
 
-		params := []interface{}{slot, arg}
-
-		block, err := client11.GetConfirmedBlock(context.Background(), params...)
+		block, err := client11.GetBlock(context.Background(), slot)
 		if err != nil || block.Blockhash == "" {
-			if rpcErr, ok := err.(*client.ErrorResponse); ok {
+			if rpcErr, ok := err.(*rpc.JsonRpcError); ok {
 				//Slot 被跳过打印日志记录，按正常逻辑处理
 				//目前发现这两种是可以被忽略的情况,
 				if rpcErr.Code == -32007 || rpcErr.Code == -32009 {
@@ -191,9 +186,9 @@ func checkBlock() {
 
 		var str string
 		if block.Blockhash == "" {
-			str = fmt.Sprintf("slot:%d hash:%s ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", slot, block.Blockhash, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+			str = fmt.Sprintf("slot:%d hash:%s ParentSLot:%d PreviousHash:%s size:%d(EMPTY)\n", slot, block.Blockhash, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 		} else {
-			str = fmt.Sprintf("slot:%d hash:%s ParentSLot:%d PreviousHash:%s size:%d\n", slot, block.Blockhash, block.ParentSLot, block.PreviousBlockhash, len(block.Transactions))
+			str = fmt.Sprintf("slot:%d hash:%s ParentSLot:%d PreviousHash:%s size:%d\n", slot, block.Blockhash, block.ParentSlot, block.PreviousBlockhash, len(block.Transactions))
 		}
 		fmt.Print("no ->" + str)
 	}
@@ -221,95 +216,80 @@ type Date111 struct {
 
 func tet11() {
 	//rawurl := "https://api.devnet.solana.com"
-	//rawurl := "https://api.testnet.solana.com"
-	rawurl := "https://api.mainnet-beta.solana.com"
-
-	toPublicKey := "APhyMCpYjQ9RdEBn8cs4ifyBXjxAS5JtM3wYpWMJjsY5"
-	//toPublicKey := "2bj53paPfbLXFBruju2XHEfdrdfQjdD1d1iVwAKyGRCS"
-	cs := client.NewClient(rawurl)
-	//充值 验证地址必须为系统地址才可以
-	info, _ := cs.GetAccountInfo(context.Background(), toPublicKey)
-	tt, ok := (info.Data).(Date111)
-	if ok {
-		fmt.Println(tt.Parsed.Info.Owner, tt.Parsed.Info.Mint)
-	} else {
-		fmt.Println("Fuck")
-	}
-
-	resByre, resByteErr := json.Marshal(info.Data)
-	if resByteErr != nil {
-		fmt.Println("读取信息失败")
-		return
-	}
-	var newData Date111
-	jsonRes := json.Unmarshal(resByre, &newData)
-	if jsonRes != nil {
-		fmt.Println("读取信息失败")
-		return
-	}
-
-	//fmt.Println(newData)
-	fmt.Println(newData.Parsed.Info.Owner, newData.Parsed.Info.Mint)
+	////rawurl := "https://api.testnet.solana.com"
+	//rawurl := "https://api.mainnet-beta.solana.com"
+	//
+	//toPublicKey := "APhyMCpYjQ9RdEBn8cs4ifyBXjxAS5JtM3wYpWMJjsY5"
+	////toPublicKey := "2bj53paPfbLXFBruju2XHEfdrdfQjdD1d1iVwAKyGRCS"
+	//cs := client.NewClient(rawurl)
+	////充值 验证地址必须为系统地址才可以
+	//info, _ := cs.GetAccountInfo(context.Background(), toPublicKey)
+	//tt, ok := info.(client.AccountInfo)
+	//if ok {
+	//	fmt.Println(tt.Parsed.Info.Owner, tt.Parsed.Info.Mint)
+	//} else {
+	//	fmt.Println("Fuck")
+	//}
+	//
+	//resByre, resByteErr := json.Marshal(info.Data)
+	//if resByteErr != nil {
+	//	fmt.Println("读取信息失败")
+	//	return
+	//}
+	//var newData Date111
+	//jsonRes := json.Unmarshal(resByre, &newData)
+	//if jsonRes != nil {
+	//	fmt.Println("读取信息失败")
+	//	return
+	//}
+	//
+	////fmt.Println(newData)
+	//fmt.Println(newData.Parsed.Info.Owner, newData.Parsed.Info.Mint)
 }
 
-func testGetTokenList() {
-	rawurl := "https://cdn.jsdelivr.net/gh/solana-labs/token-list@main/src/tokens/solana.tokenlist.json"
-
-	cli := client.NewClient(rawurl)
-	//充值 验证地址必须为系统地址才可以
-	list, err := cli.GetTokenList(context.Background(), 101)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	for _, t := range list {
-		fmt.Printf("%+v \n", t)
-	}
-}
-
-func TestGetTokenAccountsByOwner() {
-	rawurl := "https://api.mainnet-beta.solana.com"
-	cs := client.NewClient(rawurl)
-
-	list := []string{
-		"GQp5ZoNoNHNJq7ZvabygqV6513uY8WP7SL5Q3XVZ326T", //两个token 帐户
-		"GA7HWfCEZ2GrQk1N3ceGV83oUz2KUDeDaXLsGVsz18aM", //一个token	帐户
-		"2K3RjUsnNGr3awtRGek3USe4gAZ2E6fSYdz6t88ii2Cm"} //没有token帐户
-	mint := "kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6"
-	for _, account := range list {
-		info, err := cs.GetTokenAccountsByOwner(context.Background(), account, mint)
-		if err != nil {
-			fmt.Println(err)
-			continue
-		}
-		if len(*info) <= 0 {
-			fmt.Println(fmt.Errorf("collector: build(from:%s,mint:%s has not token account)", account, mint))
-			continue
-		}
-
-		var chainAmount uint64 = 0
-		for _, token := range *info {
-			resByre, resByteErr := json.Marshal(token.Account.Data)
-			if resByteErr != nil {
-				fmt.Println("读取信息失败")
-				continue
-			}
-			var in client.AccountDataByOwner
-			jsonRes := json.Unmarshal(resByre, &in)
-			if jsonRes != nil {
-				fmt.Println("读取信息失败")
-				continue
-			}
-
-			fmt.Printf("Token account: %s  balance: %s \n", token.Pubkey, in.Parsed.Info.TokenAmount.Amount)
-
-			intNum, _ := strconv.Atoi(in.Parsed.Info.TokenAmount.Amount)
-			chainAmount += uint64(intNum)
-		}
-
-		fmt.Println(chainAmount)
-	}
-}
+//func TestGetTokenAccountsByOwner() {
+//	rawurl := "https://api.mainnet-beta.solana.com"
+//	cs := client.NewClient(rawurl)
+//
+//	list := []string{
+//		"GQp5ZoNoNHNJq7ZvabygqV6513uY8WP7SL5Q3XVZ326T", //两个token 帐户
+//		"GA7HWfCEZ2GrQk1N3ceGV83oUz2KUDeDaXLsGVsz18aM", //一个token	帐户
+//		"2K3RjUsnNGr3awtRGek3USe4gAZ2E6fSYdz6t88ii2Cm"} //没有token帐户
+//	mint := "kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6"
+//	for _, account := range list {
+//		info, err := cs.GetTokenAccountsByOwner(context.Background(), account, mint)
+//		if err != nil {
+//			fmt.Println(err)
+//			continue
+//		}
+//		if len(*info) <= 0 {
+//			fmt.Println(fmt.Errorf("collector: build(from:%s,mint:%s has not token account)", account, mint))
+//			continue
+//		}
+//
+//		var chainAmount uint64 = 0
+//		for _, token := range *info {
+//			resByre, resByteErr := json.Marshal(token.Account.Data)
+//			if resByteErr != nil {
+//				fmt.Println("读取信息失败")
+//				continue
+//			}
+//			var in client.AccountDataByOwner
+//			jsonRes := json.Unmarshal(resByre, &in)
+//			if jsonRes != nil {
+//				fmt.Println("读取信息失败")
+//				continue
+//			}
+//
+//			fmt.Printf("Token account: %s  balance: %s \n", token.Pubkey, in.Parsed.Info.TokenAmount.Amount)
+//
+//			intNum, _ := strconv.Atoi(in.Parsed.Info.TokenAmount.Amount)
+//			chainAmount += uint64(intNum)
+//		}
+//
+//		fmt.Println(chainAmount)
+//	}
+//}
 
 func getHealth() {
 	list := []string{
