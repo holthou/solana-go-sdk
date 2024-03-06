@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"errors"
 
+	"filippo.io/edwards25519"
 	"github.com/mr-tron/base58"
-	"github.com/teserakt-io/golang-ed25519/edwards25519"
 )
 
 const (
@@ -16,6 +16,10 @@ const (
 )
 
 type PublicKey [PublicKeyLength]byte
+
+func (p PublicKey) String() string {
+	return p.ToBase58()
+}
 
 func PublicKeyFromString(s string) PublicKey {
 	d, _ := base58.Decode(s)
@@ -33,27 +37,25 @@ func PublicKeyFromBytes(b []byte) PublicKey {
 
 func CreateProgramAddress(seeds [][]byte, programId PublicKey) (PublicKey, error) {
 	if len(seeds) > MaxSeed {
-		return PublicKey{}, errors.New("Length of the seed is too long for address generation")
+		return PublicKey{}, errors.New("length of the seed is too long for address generation")
 	}
 
 	buf := []byte{}
 	for _, seed := range seeds {
 		if len(seed) > MaxSeedLength {
-			return PublicKey{}, errors.New("Length of the seed is too long for address generation")
+			return PublicKey{}, errors.New("length of the seed is too long for address generation")
 		}
 		buf = append(buf, seed...)
 	}
 	buf = append(buf, programId[:]...)
 	buf = append(buf, []byte("ProgramDerivedAddress")...)
 	h := sha256.Sum256(buf)
-	pubKey := PublicKeyFromBytes(h[:])
 
-	// public key is on curve
-	var A edwards25519.ExtendedGroupElement
-	if A.FromBytes((*[32]byte)(&pubKey)) {
-		return PublicKey{}, errors.New("Invalid seeds, address must fall off the curve")
+	pubkey := PublicKeyFromBytes(h[:])
+	if IsOnCurve(pubkey) {
+		return PublicKey{}, errors.New("invalid seeds, address must fall off the curve")
 	}
-	return pubKey, nil
+	return pubkey, nil
 }
 
 func (p PublicKey) ToBase58() string {
@@ -68,6 +70,11 @@ func (p *PublicKey) MarshalJSON() ([]byte, error) {
 	return json.Marshal(p.ToBase58())
 }
 
+func IsOnCurve(p PublicKey) bool {
+	_, err := new(edwards25519.Point).SetBytes(p.Bytes())
+	return err == nil
+}
+
 func CreateWithSeed(from PublicKey, seed string, programID PublicKey) PublicKey {
 	b := make([]byte, 0, 64+len(seed))
 	b = append(b, from[:]...)
@@ -77,7 +84,7 @@ func CreateWithSeed(from PublicKey, seed string, programID PublicKey) PublicKey 
 	return PublicKeyFromBytes(hash[:])
 }
 
-func FindAssociatedTokenAddress(walletAddress, tokenMintAddress PublicKey) (PublicKey, int, error) {
+func FindAssociatedTokenAddress(walletAddress, tokenMintAddress PublicKey) (PublicKey, uint8, error) {
 	seeds := [][]byte{}
 	seeds = append(seeds, walletAddress.Bytes())
 	seeds = append(seeds, TokenProgramID.Bytes())
@@ -86,10 +93,10 @@ func FindAssociatedTokenAddress(walletAddress, tokenMintAddress PublicKey) (Publ
 	return FindProgramAddress(seeds, SPLAssociatedTokenAccountProgramID)
 }
 
-func FindProgramAddress(seed [][]byte, programID PublicKey) (PublicKey, int, error) {
+func FindProgramAddress(seed [][]byte, programID PublicKey) (PublicKey, uint8, error) {
 	var pubKey PublicKey
 	var err error
-	nonce := 0xff
+	var nonce uint8 = 0xff
 	for nonce != 0x0 {
 		pubKey, err = CreateProgramAddress(append(seed, []byte{byte(nonce)}), programID)
 		if err == nil {

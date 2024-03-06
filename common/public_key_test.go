@@ -93,7 +93,23 @@ func TestCreateProgramAddress(t *testing.T) {
 				ProgramID: PublicKeyFromString("EmPaWGCw48Sxu9Mu9pVrxe4XL2JeXUNTfoTXLuLz31gv"),
 			},
 			want:    PublicKey{},
-			wantErr: errors.New("Invalid seeds, address must fall off the curve"),
+			wantErr: errors.New("invalid seeds, address must fall off the curve"),
+		},
+		{
+			args: args{
+				seeds:     [][]byte{{0x1}, {0x1}},
+				ProgramID: PublicKeyFromString("EmPaWGCw48Sxu9Mu9pVrxe4XL2JeXUNTfoTXLuLz31gv"),
+			},
+			want:    PublicKeyFromString("87iRKybFEYbomHS1fhkRC7piBqVBq48KiaXXmVtiHWH"),
+			wantErr: nil,
+		},
+		{
+			args: args{
+				seeds:     [][]byte{{0x1}, {0x2}},
+				ProgramID: PublicKeyFromString("EmPaWGCw48Sxu9Mu9pVrxe4XL2JeXUNTfoTXLuLz31gv"),
+			},
+			want:    PublicKey{},
+			wantErr: errors.New("invalid seeds, address must fall off the curve"),
 		},
 		{
 			args: args{
@@ -101,7 +117,7 @@ func TestCreateProgramAddress(t *testing.T) {
 				ProgramID: PublicKeyFromString("EmPaWGCw48Sxu9Mu9pVrxe4XL2JeXUNTfoTXLuLz31gv"),
 			},
 			want:    PublicKey{},
-			wantErr: errors.New("Max seed length exceeded"),
+			wantErr: errors.New("max seed length exceeded"),
 		},
 	}
 	for _, tt := range tests {
@@ -112,7 +128,7 @@ func TestCreateProgramAddress(t *testing.T) {
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("CreateProgramAddress() = %v, want %v", got, tt.want)
+				t.Errorf("CreateProgramAddress() = %v, want %v", got.ToBase58(), tt.want.ToBase58())
 			}
 		})
 	}
@@ -127,7 +143,7 @@ func TestFindAssociatedTokenAddress(t *testing.T) {
 		name    string
 		args    args
 		want    PublicKey
-		want1   int
+		want1   uint8
 		wantErr bool
 	}{
 		{
@@ -190,6 +206,43 @@ func TestCreateWithSeed(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := CreateWithSeed(tt.args.from, tt.args.seed, tt.args.programID); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("CreateWithSeed() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestIsOnCurve(t *testing.T) {
+	type args struct {
+		p PublicKey
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			args: args{
+				p: PublicKeyFromString("EvN4kgKmCmYzdbd5kL8Q8YgkUW5RoqMTpBczrfLExtx7"),
+			},
+			want: true,
+		},
+		{
+			args: args{
+				p: PublicKeyFromString("DTA7FmUNYuQs2mScj2Lx8gQV63SEL1zGtzCSvPxtijbi"),
+			},
+			want: false,
+		},
+		{
+			args: args{
+				p: PublicKeyFromString("9FBAAZPWJ3k5p1oCRkAXbfACm8hwufjWNdAjGW8qgvtC"),
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsOnCurve(tt.args.p); got != tt.want {
+				t.Errorf("IsOnCurve() = %v, want %v", got, tt.want)
 			}
 		})
 	}

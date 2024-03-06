@@ -1,8 +1,13 @@
-# solana-go-sdk
-[![Go](https://github.com/portto/solana-go-sdk/actions/workflows/go.yml/badge.svg?branch=main)](https://github.com/portto/solana-go-sdk/actions/workflows/go.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/portto/solana-go-sdk)](https://goreportcard.com/report/github.com/portto/solana-go-sdk)
 
-Solana Golang SDK
+<h1 align="center">Solana Go SDK</h1>
+<div align="center">
+	<img src="https://github.com/portto/solana-go-sdk/actions/workflows/go.yml/badge.svg?branch=main"></img>
+	<img src="https://goreportcard.com/badge/github.com/portto/solana-go-sdk"></img>
+	<img alt="GitHub go.mod Go version" src="https://img.shields.io/github/go-mod/go-version/portto/solana-go-sdk">
+	<img alt="GitHub release (latest SemVer)" src="https://img.shields.io/github/v/release/portto/solana-go-sdk?display_name=tag">
+</div>
+
+# Guide
 
 ## Getting Started
 
@@ -25,24 +30,31 @@ import (
 	"log"
 
 	"github.com/portto/solana-go-sdk/client"
+	"github.com/portto/solana-go-sdk/rpc"
 )
 
 func main() {
-	c := client.NewClient(client.TestnetRPCEndpoint)
+	c := client.NewClient(rpc.MainnetRPCEndpoint)
 
-	resp, err := c.GetVersion(context.Background())
+	// If you would like to customize the http client used to make the
+	// requests you could do something like this
+	// c := client.New(rpc.WithEndpoint(rpc.MainnetRPCEndpoint),rpc.WithHTTPClient(customHTTPClient))
+
+	resp, err := c.GetVersion(context.TODO())
 	if err != nil {
-		log.Fatalf("get version error, err: %v", err)
+		log.Fatalf("failed to version info, err: %v", err)
 	}
 
-	fmt.Println("solana version:", resp.SolanaCore)
-
-	// solana version: 1.6.7
+	fmt.Println("version", resp.SolanaCore)
 }
 
 ```
 
-#### New Account
+## RPC
+
+All interfaces of rpc follow the [solana's json-rpc docs](https://docs.solana.com/developing/clients/jsonrpc-api).
+
+The implementation of client in this project separate into two parts, rpc and wrapped. The wrapped only returns main result value and the rpc returns whole rpc response. You can switch it by yourself for different situation. Take `getBalance` as example:
 
 ```go
 package main
@@ -53,143 +65,67 @@ import (
 	"log"
 
 	"github.com/portto/solana-go-sdk/client"
-	"github.com/portto/solana-go-sdk/types"
+	"github.com/portto/solana-go-sdk/rpc"
 )
 
 func main() {
-	c := client.NewClient(client.TestnetRPCEndpoint)
+	c := client.NewClient(rpc.DevnetRPCEndpoint)
 
-	account := types.NewAccount()
-	fmt.Println("account address:", account.PublicKey.ToBase58())
-	fmt.Println("account private key:", account.PrivateKey)
-
-	airdropTxHash, err := c.RequestAirdrop(context.Background(), account.PublicKey.ToBase58(), 1000000000) // 1 SOL = 10e9 lamports
-	if err != nil {
-		log.Fatalln("request airdrop error", err)
-	}
-	fmt.Println("airdrop txhash:", airdropTxHash)
-}
-```
-
-#### Send Transaction
-
-There are two ways to generate tx.
-
-You can use `CreateRawTransaction` to generate raw tx
-
-```go
-package main
-
-import (
-	"context"
-	"log"
-
-	"github.com/portto/solana-go-sdk/client"
-	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/sysprog"
-	"github.com/portto/solana-go-sdk/types"
-)
-
-func main() {
-	c := client.NewClient(client.TestnetRPCEndpoint)
-
-	res, err := c.GetRecentBlockhash(context.Background())
-	if err != nil {
-		log.Fatalf("get recent block hash error, err: %v\n", err)
-	}
-
-	feePayer := types.AccountFromPrivateKeyBytes([]byte{57, 17, 193, 142, 252, 221, 81, 90, 60, 28, 93, 237, 212, 51, 95, 95, 41, 104, 221, 59, 13, 244, 54, 1, 79, 180, 120, 178, 81, 45, 46, 193, 142, 11, 237, 209, 82, 24, 36, 72, 7, 76, 66, 215, 44, 116, 17, 132, 252, 205, 47, 74, 57, 230, 36, 98, 119, 86, 11, 40, 71, 195, 47, 254})
-
-	accountA := types.AccountFromPrivateKeyBytes([]byte{185, 195, 153, 239, 225, 24, 36, 241, 184, 42, 46, 216, 48, 6, 157, 169, 66, 255, 174, 87, 189, 1, 255, 106, 202, 38, 57, 214, 26, 188, 154, 136, 119, 16, 250, 24, 46, 183, 154, 255, 79, 143, 141, 38, 53, 77, 142, 212, 243, 8, 185, 215, 169, 217, 96, 191, 139, 190, 157, 96, 101, 88, 27, 79})
-
-	rawTx, err := types.CreateRawTransaction(types.CreateRawTransactionParam{
-		Instructions: []types.Instruction{
-			sysprog.Transfer(
-				accountA.PublicKey, // from
-				common.PublicKeyFromString("2xNweLHLqrbx4zo1waDvgWJHgsUpPj8Y8icbAFeR4a8i"), // to
-				1000000000, // 1 SOL
-			),
-		},
-		Signers:         []types.Account{feePayer, accountA},
-		FeePayer:        feePayer.PublicKey,
-		RecentBlockHash: res.Blockhash,
-	})
-	if err != nil {
-		log.Fatalf("generate tx error, err: %v\n", err)
-	}
-
-	txSig, err := c.SendRawTransaction(context.Background(), rawTx)
-	if err != nil {
-		log.Fatalf("send tx error, err: %v\n", err)
-	}
-
-	log.Println("txHash:", txSig)
-}
-```
-
-or you can create raw message then fill signatures by yourself.
-
-```go
-package main
-
-import (
-	"context"
-	"crypto/ed25519"
-	"log"
-
-	"github.com/portto/solana-go-sdk/client"
-	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/sysprog"
-	"github.com/portto/solana-go-sdk/types"
-)
-
-func main() {
-	c := client.NewClient(client.TestnetRPCEndpoint)
-
-	res, err := c.GetRecentBlockhash(context.Background())
-	if err != nil {
-		log.Fatalf("get recent block hash error, err: %v\n", err)
-	}
-
-	feePayer := types.AccountFromPrivateKeyBytes([]byte{57, 17, 193, 142, 252, 221, 81, 90, 60, 28, 93, 237, 212, 51, 95, 95, 41, 104, 221, 59, 13, 244, 54, 1, 79, 180, 120, 178, 81, 45, 46, 193, 142, 11, 237, 209, 82, 24, 36, 72, 7, 76, 66, 215, 44, 116, 17, 132, 252, 205, 47, 74, 57, 230, 36, 98, 119, 86, 11, 40, 71, 195, 47, 254})
-
-	accountA := types.AccountFromPrivateKeyBytes([]byte{185, 195, 153, 239, 225, 24, 36, 241, 184, 42, 46, 216, 48, 6, 157, 169, 66, 255, 174, 87, 189, 1, 255, 106, 202, 38, 57, 214, 26, 188, 154, 136, 119, 16, 250, 24, 46, 183, 154, 255, 79, 143, 141, 38, 53, 77, 142, 212, 243, 8, 185, 215, 169, 217, 96, 191, 139, 190, 157, 96, 101, 88, 27, 79})
-
-	message := types.NewMessage(
-		feePayer.PublicKey,
-		[]types.Instruction{
-			sysprog.Transfer(
-				accountA.PublicKey, // from
-				common.PublicKeyFromString("2xNweLHLqrbx4zo1waDvgWJHgsUpPj8Y8icbAFeR4a8i"), // to
-				1000000000, // 1 SOL
-			),
-		},
-		res.Blockhash,
+	// get balance
+	balance, err := c.GetBalance(
+		context.TODO(),
+		"RNfp4xTbBb4C3kcv2KqtAj8mu4YhMHxqm1Skg9uchZ7",
 	)
-
-	serializeMessage, err := message.Serialize()
 	if err != nil {
-		log.Fatalf("serialize message error, err: %v\n", err)
+		log.Fatalf("failed to get balance, err: %v", err)
 	}
+	fmt.Printf("balance: %v\n", balance)
 
-	tx, err := types.CreateTransaction(message, map[common.PublicKey]types.Signature{
-		feePayer.PublicKey: ed25519.Sign(feePayer.PrivateKey, serializeMessage),
-		accountA.PublicKey: ed25519.Sign(accountA.PrivateKey, serializeMessage),
-	})
+	// get balance with sepcific commitment
+	balance, err = c.GetBalanceWithConfig(
+		context.TODO(),
+		"RNfp4xTbBb4C3kcv2KqtAj8mu4YhMHxqm1Skg9uchZ7",
+		rpc.GetBalanceConfig{
+			Commitment: rpc.CommitmentProcessed,
+		},
+	)
 	if err != nil {
-		log.Fatalf("generate tx error, err: %v\n", err)
+		log.Fatalf("failed to get balance with cfg, err: %v", err)
 	}
+	fmt.Printf("balance: %v\n", balance)
 
-	rawTx, err := tx.Serialize()
+	// for advanced usage. fetch full rpc response
+	res, err := c.RpcClient.GetBalance(
+		context.TODO(),
+		"RNfp4xTbBb4C3kcv2KqtAj8mu4YhMHxqm1Skg9uchZ7",
+	)
 	if err != nil {
-		log.Fatalf("serialize tx error, err: %v\n", err)
+		log.Fatalf("failed to get balance via rpc client, err: %v", err)
 	}
-
-	txSig, err := c.SendRawTransaction(context.Background(), rawTx)
-	if err != nil {
-		log.Fatalf("send tx error, err: %v\n", err)
-	}
-
-	log.Println("txHash:", txSig)
+	fmt.Printf("response: %+v\n", res)
 }
+
 ```
+
+## Programing model & Program
+
+There are some important tpyes in solana.
+
+- Program
+
+resides in the `program/` folder.
+
+- Pubkey (a basic identity of key)
+
+resides in the `common/` folder.
+
+- Insturciton (contain many pubkeys and program ID)
+- Message (contain many instructions)
+- Transaction (contain a message and many signatures)
+- Account (a pub/pri keypair )
+
+reside in the `types/` folder.
+
+### More Example
+
+for more examples, follow `examples/` folder
