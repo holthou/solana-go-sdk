@@ -13,6 +13,37 @@ type TokenAccount struct {
 	PublicKey common.PublicKey
 }
 
+// TOOD 待测试函数的功能
+func (c *Client) GetTokenAccountsByOwner(ctx context.Context, base58Addr string) (map[common.PublicKey]token.TokenAccount, error) {
+	getTokenAccountsByOwnerResponse, err := c.RpcClient.GetTokenAccountsByOwnerWithConfig(
+		ctx,
+		base58Addr,
+		rpc.GetTokenAccountsByOwnerConfigFilter{
+			ProgramId: common.TokenProgramID.ToBase58(),
+		},
+		rpc.GetTokenAccountsByOwnerConfig{
+			Encoding: rpc.AccountEncodingBase64,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	m := map[common.PublicKey]token.TokenAccount{}
+	for _, v := range getTokenAccountsByOwnerResponse.Result.Value {
+		accountInfo, err := convertAccountInfo(v.Account)
+		if err != nil {
+			return nil, err
+		}
+		tokenAccount, err := token.DeserializeTokenAccount(accountInfo.Data, accountInfo.Owner)
+		if err != nil {
+			return nil, err
+		}
+		m[common.PublicKeyFromString(v.Pubkey)] = tokenAccount
+	}
+	return m, err
+}
+
 func (c *Client) GetTokenAccountsByOwnerByMint(ctx context.Context, owner, mintAddr string) ([]TokenAccount, error) {
 	return process(
 		func() (rpc.JsonRpcResponse[rpc.ValueWithContext[rpc.GetProgramAccounts]], error) {

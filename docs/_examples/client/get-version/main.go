@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/portto/solana-go-sdk/common"
-	"github.com/portto/solana-go-sdk/pkg/pointer"
+	"github.com/blocto/solana-go-sdk/common"
+	"github.com/blocto/solana-go-sdk/pkg/pointer"
 	"log"
 
 	"github.com/blocto/solana-go-sdk/client"
@@ -23,12 +23,12 @@ func main() {
 	}
 
 	{
-		arg := rpc.GetBlockConfig{
-			Encoding:                       rpc.GetBlockConfigEncodingBase64, //对于这个接口,只可以用这个类型
-			TransactionDetails:             rpc.GetBlockConfigTransactionDetailsFull,
-			Rewards:                        pointer.Get[bool](false),
-			Commitment:                     rpc.CommitmentFinalized,
-			MaxSupportedTransactionVersion: pointer.Get[uint8](0), //目前最新版本是0，可能会升级
+		arg := client.GetBlockConfig{
+			//Encoding:                       rpc.GetBlockConfigEncodingBase64, //对于这个接口,只可以用这个类型
+			TransactionDetails: rpc.GetBlockConfigTransactionDetailsFull,
+			Rewards:            pointer.Get[bool](false),
+			Commitment:         rpc.CommitmentFinalized,
+			//MaxSupportedTransactionVersion: pointer.Get[uint8](0), //目前最新版本是0，可能会升级
 		}
 
 		resp, err := c.GetBlockWithConfig(context.TODO(), 155916607, arg)
@@ -39,10 +39,8 @@ func main() {
 	}
 
 	{
-		cfg := rpc.GetTransactionConfig{
-			Encoding:                       rpc.TransactionEncodingBase64,
-			Commitment:                     rpc.CommitmentFinalized,
-			MaxSupportedTransactionVersion: pointer.Get[uint8](0),
+		cfg := client.GetTransactionConfig{
+			Commitment: rpc.CommitmentFinalized,
 		}
 		txid := "omVEuKY8h16SRFMZh1XxUxZNMPHdUqJoxTczzqFnWB3hQs1KPK5AAwtK91A5UAZRQ4Toh5N5ZkpZKoQFrYUwWF9"
 		trx, err := c.GetTransactionWithConfig(context.TODO(), txid, cfg)
