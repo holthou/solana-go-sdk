@@ -176,6 +176,45 @@ func TestFindAssociatedTokenAddress(t *testing.T) {
 	}
 }
 
+func TestFindAssociatedTokenAddress2022(t *testing.T) {
+	type args struct {
+		walletAddress    PublicKey
+		tokenMintAddress PublicKey
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    PublicKey
+		want1   uint8
+		wantErr bool
+	}{
+		{
+			args: args{
+				walletAddress:    PublicKeyFromString("48AEer19GHJohjnnDKMVfn2y6MBJGtxwvASkTeoxEaJC"),
+				tokenMintAddress: PublicKeyFromString("7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1"),
+			},
+			want:    PublicKeyFromString("9Du6Yi3yisYp5ScoRCr9eE9PywXLEdzj63imGZKSRNNG"),
+			want1:   254,
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1, err := FindAssociatedTokenAddress2022(tt.args.walletAddress, tt.args.tokenMintAddress)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("FindAssociatedTokenAddress() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("FindAssociatedTokenAddress() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("FindAssociatedTokenAddress2022() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
+
 func TestCreateWithSeed(t *testing.T) {
 	type args struct {
 		from      PublicKey
