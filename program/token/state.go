@@ -96,6 +96,7 @@ func MintAccountFromData(data []byte) (MintAccount, error) {
 }
 
 const TokenAccountSize = 165
+const Token2022AccountSize = 182
 
 type TokenAccountState uint8
 
@@ -118,8 +119,9 @@ type TokenAccount struct {
 	CloseAuthority  *common.PublicKey
 }
 
+// TODO 这里针对 Token 2022 Program 的token待完善，这里只是初步解析
 func TokenAccountFromData(data []byte) (TokenAccount, error) {
-	if len(data) != TokenAccountSize {
+	if len(data) != TokenAccountSize && len(data) != Token2022AccountSize {
 		return TokenAccount{}, ErrInvalidAccountDataSize
 	}
 
@@ -164,7 +166,7 @@ func TokenAccountFromData(data []byte) (TokenAccount, error) {
 }
 
 func DeserializeTokenAccount(data []byte, accountOwner common.PublicKey) (TokenAccount, error) {
-	if accountOwner != common.TokenProgramID {
+	if accountOwner != common.TokenProgramID && accountOwner != common.Token2022ProgramID {
 		return TokenAccount{}, ErrInvalidAccountOwner
 	}
 	return TokenAccountFromData(data)

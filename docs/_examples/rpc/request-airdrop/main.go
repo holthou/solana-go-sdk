@@ -10,10 +10,10 @@ import (
 )
 
 func main() {
-	c := client.NewClient(rpc.DevnetRPCEndpoint)
+	c := client.NewClient(rpc.TestnetRPCEndpoint)
 	sig, err := c.RequestAirdrop(
 		context.TODO(),
-		"9qeP9DmjXAmKQc4wy133XZrQ3Fo4ejsYteA7X4YFJ3an", // address
+		"3vZzcmwHTGf6cB5CwwhQuVqneM9nidMoTjhNQH4adhVP", // address
 		1e9, // lamports (1 SOL = 10^9 lamports)
 	)
 	if err != nil {

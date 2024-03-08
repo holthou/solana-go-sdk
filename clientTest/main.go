@@ -247,49 +247,33 @@ func tet11() {
 	//fmt.Println(newData.Parsed.Info.Owner, newData.Parsed.Info.Mint)
 }
 
-//func TestGetTokenAccountsByOwner() {
-//	rawurl := "https://api.mainnet-beta.solana.com"
-//	cs := client.NewClient(rawurl)
-//
-//	list := []string{
-//		"GQp5ZoNoNHNJq7ZvabygqV6513uY8WP7SL5Q3XVZ326T", //两个token 帐户
-//		"GA7HWfCEZ2GrQk1N3ceGV83oUz2KUDeDaXLsGVsz18aM", //一个token	帐户
-//		"2K3RjUsnNGr3awtRGek3USe4gAZ2E6fSYdz6t88ii2Cm"} //没有token帐户
-//	mint := "kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6"
-//	for _, account := range list {
-//		info, err := cs.GetTokenAccountsByOwner(context.Background(), account, mint)
-//		if err != nil {
-//			fmt.Println(err)
-//			continue
-//		}
-//		if len(*info) <= 0 {
-//			fmt.Println(fmt.Errorf("collector: build(from:%s,mint:%s has not token account)", account, mint))
-//			continue
-//		}
-//
-//		var chainAmount uint64 = 0
-//		for _, token := range *info {
-//			resByre, resByteErr := json.Marshal(token.Account.Data)
-//			if resByteErr != nil {
-//				fmt.Println("读取信息失败")
-//				continue
-//			}
-//			var in client.AccountDataByOwner
-//			jsonRes := json.Unmarshal(resByre, &in)
-//			if jsonRes != nil {
-//				fmt.Println("读取信息失败")
-//				continue
-//			}
-//
-//			fmt.Printf("Token account: %s  balance: %s \n", token.Pubkey, in.Parsed.Info.TokenAmount.Amount)
-//
-//			intNum, _ := strconv.Atoi(in.Parsed.Info.TokenAmount.Amount)
-//			chainAmount += uint64(intNum)
-//		}
-//
-//		fmt.Println(chainAmount)
-//	}
-//}
+func TestGetTokenAccountsByOwner() {
+	rawurl := "https://api.mainnet-beta.solana.com"
+	cs := client.NewClient(rawurl)
+
+	//list := []string{
+	//	"GQp5ZoNoNHNJq7ZvabygqV6513uY8WP7SL5Q3XVZ326T", //两个token 帐户
+	//	"GA7HWfCEZ2GrQk1N3ceGV83oUz2KUDeDaXLsGVsz18aM", //一个token	帐户
+	//	"2K3RjUsnNGr3awtRGek3USe4gAZ2E6fSYdz6t88ii2Cm"} //没有token帐户
+	//mint := "kinXdEcpDQeHPEuQnqmUgtYykqKGVFq6CeVX5iAHJq6"
+	list := []string{
+		"48AEer19GHJohjnnDKMVfn2y6MBJGtxwvASkTeoxEaJC"} //没有token帐户
+	mint := "7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1"
+	for _, account := range list {
+		info, err := cs.GetTokenAccountsByOwnerByMint(context.Background(), account, mint)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		var chainAmount uint64 = 0
+		for _, token := range info {
+			fmt.Printf("Token account: %s  balance: %d \n", token.PublicKey.String(), token.Amount)
+			chainAmount += token.Amount
+		}
+
+		fmt.Println(chainAmount)
+	}
+}
 
 func getHealth() {
 	list := []string{
@@ -311,7 +295,7 @@ func getHealth() {
 
 func main() {
 	//tet11()
-	//TestGetTokenAccountsByOwner()
-	getHealth()
+	TestGetTokenAccountsByOwner()
+	//getHealth()
 
 }
