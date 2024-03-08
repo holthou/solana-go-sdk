@@ -1,6 +1,7 @@
 package tokenprog
 
 import (
+	"bytes"
 	"github.com/blocto/solana-go-sdk/common"
 	"github.com/blocto/solana-go-sdk/pkg/bincode"
 	"github.com/blocto/solana-go-sdk/types"
@@ -472,16 +473,22 @@ func ThawAccount(param ThawAccountParam) types.Instruction {
 }
 
 type TransferCheckedParam struct {
-	From     common.PublicKey
-	To       common.PublicKey
-	Mint     common.PublicKey
-	Auth     common.PublicKey
-	Signers  []common.PublicKey
-	Amount   uint64
-	Decimals uint8
+	From      common.PublicKey
+	To        common.PublicKey
+	Mint      common.PublicKey
+	Auth      common.PublicKey
+	Signers   []common.PublicKey
+	Amount    uint64
+	Decimals  uint8
+	ProgramID common.PublicKey
 }
 
 func TransferChecked(param TransferCheckedParam) types.Instruction {
+	if !bytes.Equal(param.ProgramID.Bytes(), common.TokenProgramID.Bytes()) &&
+		!bytes.Equal(param.ProgramID.Bytes(), common.Token2022ProgramID.Bytes()) {
+		panic("TransferChecked:TokenProgramID should only TokenProgramID or Token2022ProgramID")
+	}
+
 	data, err := bincode.SerializeData(struct {
 		Instruction Instruction
 		Amount      uint64
@@ -505,7 +512,7 @@ func TransferChecked(param TransferCheckedParam) types.Instruction {
 	}
 
 	return types.Instruction{
-		ProgramID: common.TokenProgramID,
+		ProgramID: param.ProgramID,
 		Accounts:  accounts,
 		Data:      data,
 	}

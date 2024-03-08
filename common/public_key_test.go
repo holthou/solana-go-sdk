@@ -141,6 +141,7 @@ func TestFindAssociatedTokenAddress(t *testing.T) {
 	type args struct {
 		walletAddress    PublicKey
 		tokenMintAddress PublicKey
+		tokenProgramID   PublicKey
 	}
 	tests := []struct {
 		name    string
@@ -153,15 +154,46 @@ func TestFindAssociatedTokenAddress(t *testing.T) {
 			args: args{
 				walletAddress:    PublicKeyFromString("EvN4kgKmCmYzdbd5kL8Q8YgkUW5RoqMTpBczrfLExtx7"),
 				tokenMintAddress: PublicKeyFromString("8765cK2Vucsic6NA5nm4cfkrCzusaFVqBf6Pk31tGkXH"),
+				tokenProgramID:   TokenProgramID,
 			},
 			want:    PublicKeyFromString("HLzppk6ohPg9Ab99XTFhsa6FcG14Au3rTijGe9c8QHp1"),
 			want1:   254,
 			wantErr: false,
 		},
+		{
+			args: args{
+				walletAddress:    PublicKeyFromString("48AEer19GHJohjnnDKMVfn2y6MBJGtxwvASkTeoxEaJC"),
+				tokenMintAddress: PublicKeyFromString("7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1"),
+				tokenProgramID:   Token2022ProgramID,
+			},
+			want:    PublicKeyFromString("9Du6Yi3yisYp5ScoRCr9eE9PywXLEdzj63imGZKSRNNG"),
+			want1:   254,
+			wantErr: false,
+		},
+		{
+			args: args{
+				walletAddress:    PublicKeyFromString("D9MfjWS4B2yckEi9FFGJZGq2tMBVA5sDhr5uuMWcSEqT"),
+				tokenMintAddress: PublicKeyFromString("7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1"),
+				tokenProgramID:   Token2022ProgramID,
+			},
+			want:    PublicKeyFromString("7FcJYQfqAmbPhqvmHuLsMqfiSwj9a35reJJXztBD9pzs"),
+			want1:   255,
+			wantErr: false,
+		},
+		{
+			args: args{
+				walletAddress:    PublicKeyFromString("7Bmy4dXaZ3DTrnHnByHJXSnqgKtJKVbCmMvRD3nSNe2m"),
+				tokenMintAddress: PublicKeyFromString("7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1"),
+				tokenProgramID:   Token2022ProgramID,
+			},
+			want:    PublicKeyFromString("6tdHMPEpwhGLWwfehzDV5U7LvYZEfJ8QzB1zA3C36Cjt"),
+			want1:   253,
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, got1, err := FindAssociatedTokenAddress(tt.args.walletAddress, tt.args.tokenMintAddress)
+			got, got1, err := FindAssociatedTokenAddress(tt.args.walletAddress, tt.args.tokenMintAddress, tt.args.tokenProgramID)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("FindAssociatedTokenAddress() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -171,45 +203,6 @@ func TestFindAssociatedTokenAddress(t *testing.T) {
 			}
 			if got1 != tt.want1 {
 				t.Errorf("FindAssociatedTokenAddress() got1 = %v, want %v", got1, tt.want1)
-			}
-		})
-	}
-}
-
-func TestFindAssociatedTokenAddress2022(t *testing.T) {
-	type args struct {
-		walletAddress    PublicKey
-		tokenMintAddress PublicKey
-	}
-	tests := []struct {
-		name    string
-		args    args
-		want    PublicKey
-		want1   uint8
-		wantErr bool
-	}{
-		{
-			args: args{
-				walletAddress:    PublicKeyFromString("48AEer19GHJohjnnDKMVfn2y6MBJGtxwvASkTeoxEaJC"),
-				tokenMintAddress: PublicKeyFromString("7atgF8KQo4wJrD5ATGX7t1V2zVvykPJbFfNeVf1icFv1"),
-			},
-			want:    PublicKeyFromString("9Du6Yi3yisYp5ScoRCr9eE9PywXLEdzj63imGZKSRNNG"),
-			want1:   254,
-			wantErr: false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, got1, err := FindAssociatedTokenAddress2022(tt.args.walletAddress, tt.args.tokenMintAddress)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FindAssociatedTokenAddress() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindAssociatedTokenAddress() got = %v, want %v", got, tt.want)
-			}
-			if got1 != tt.want1 {
-				t.Errorf("FindAssociatedTokenAddress2022() got1 = %v, want %v", got1, tt.want1)
 			}
 		})
 	}

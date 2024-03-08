@@ -1,6 +1,7 @@
 package common
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
@@ -105,19 +106,14 @@ func CreateWithSeed(from PublicKey, seed string, programID PublicKey) PublicKey 
 	return PublicKeyFromBytes(hash[:])
 }
 
-func FindAssociatedTokenAddress2022(walletAddress, tokenMintAddress PublicKey) (PublicKey, uint8, error) {
+func FindAssociatedTokenAddress(walletAddress, tokenMintAddress, tokenProgramID PublicKey) (PublicKey, uint8, error) {
+	if !bytes.Equal(tokenProgramID.Bytes(), TokenProgramID.Bytes()) &&
+		!bytes.Equal(tokenProgramID.Bytes(), Token2022ProgramID.Bytes()) {
+		panic("FindAssociatedTokenAddress:TokenProgramID should only TokenProgramID or Token2022ProgramID")
+	}
 	seeds := [][]byte{}
 	seeds = append(seeds, walletAddress.Bytes())
-	seeds = append(seeds, Token2022ProgramID.Bytes())
-	seeds = append(seeds, tokenMintAddress.Bytes())
-
-	return FindProgramAddress(seeds, SPLAssociatedTokenAccountProgramID)
-}
-
-func FindAssociatedTokenAddress(walletAddress, tokenMintAddress PublicKey) (PublicKey, uint8, error) {
-	seeds := [][]byte{}
-	seeds = append(seeds, walletAddress.Bytes())
-	seeds = append(seeds, TokenProgramID.Bytes())
+	seeds = append(seeds, tokenProgramID.Bytes())
 	seeds = append(seeds, tokenMintAddress.Bytes())
 
 	return FindProgramAddress(seeds, SPLAssociatedTokenAccountProgramID)

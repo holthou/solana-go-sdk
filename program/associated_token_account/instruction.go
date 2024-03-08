@@ -1,6 +1,7 @@
 package associated_token_account
 
 import (
+	"bytes"
 	"github.com/blocto/solana-go-sdk/common"
 	"github.com/blocto/solana-go-sdk/types"
 	"github.com/near/borsh-go"
@@ -53,10 +54,16 @@ type CreateParam struct {
 	Owner                  common.PublicKey
 	Mint                   common.PublicKey
 	AssociatedTokenAccount common.PublicKey
+	ProgramID              common.PublicKey
 }
 
 // Create creates an associated token account for the given wallet address and token mint. Return an error if the account exists.
 func Create(param CreateParam) types.Instruction {
+	if !bytes.Equal(param.ProgramID.Bytes(), common.TokenProgramID.Bytes()) &&
+		!bytes.Equal(param.ProgramID.Bytes(), common.Token2022ProgramID.Bytes()) {
+		panic("Create:TokenProgramID should only TokenProgramID or Token2022ProgramID")
+	}
+
 	data, err := borsh.Serialize(struct {
 		Instruction Instruction
 	}{
@@ -74,7 +81,7 @@ func Create(param CreateParam) types.Instruction {
 			{PubKey: param.Owner, IsSigner: false, IsWritable: false},
 			{PubKey: param.Mint, IsSigner: false, IsWritable: false},
 			{PubKey: common.SystemProgramID, IsSigner: false, IsWritable: false},
-			{PubKey: common.TokenProgramID, IsSigner: false, IsWritable: false},
+			{PubKey: param.ProgramID, IsSigner: false, IsWritable: false},
 			{PubKey: common.SysVarRentPubkey, IsSigner: false, IsWritable: false},
 		},
 		Data: data,
