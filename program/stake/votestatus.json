@@ -1,0 +1,489 @@
+{
+  "jsonrpc": "2.0",
+  "result": {
+    "context": {
+      "apiVersion": "1.17.32",
+      "slot": 265906807
+    },
+    "value": {
+      "data": {
+        "parsed": {
+          "info": {
+            "authorizedVoters": [
+              {
+                "authorizedVoter": "6mT78jmg7L8mf5Zuhvi9URqB8BferibueYWjaZh8Tphy",
+                "epoch": 615
+              }
+            ],
+            "authorizedWithdrawer": "2RfauoCPYdfMasRJJ5XP7ompDXz2UK7oNcjotTc83Woh",
+            "commission": 7,
+            "epochCredits": [
+              {
+                "credits": "56499973",
+                "epoch": 552,
+                "previousCredits": "56129506"
+              },
+              {
+                "credits": "56866826",
+                "epoch": 553,
+                "previousCredits": "56499973"
+              },
+              {
+                "credits": "57221959",
+                "epoch": 554,
+                "previousCredits": "56866826"
+              },
+              {
+                "credits": "57591451",
+                "epoch": 555,
+                "previousCredits": "57221959"
+              },
+              {
+                "credits": "57959215",
+                "epoch": 556,
+                "previousCredits": "57591451"
+              },
+              {
+                "credits": "58326778",
+                "epoch": 557,
+                "previousCredits": "57959215"
+              },
+              {
+                "credits": "58714725",
+                "epoch": 558,
+                "previousCredits": "58326778"
+              },
+              {
+                "credits": "59101302",
+                "epoch": 559,
+                "previousCredits": "58714725"
+              },
+              {
+                "credits": "59488768",
+                "epoch": 560,
+                "previousCredits": "59101302"
+              },
+              {
+                "credits": "59877705",
+                "epoch": 561,
+                "previousCredits": "59488768"
+              },
+              {
+                "credits": "60280083",
+                "epoch": 562,
+                "previousCredits": "59877705"
+              },
+              {
+                "credits": "60684378",
+                "epoch": 563,
+                "previousCredits": "60280083"
+              },
+              {
+                "credits": "61096553",
+                "epoch": 564,
+                "previousCredits": "60684378"
+              },
+              {
+                "credits": "61508167",
+                "epoch": 565,
+                "previousCredits": "61096553"
+              },
+              {
+                "credits": "61924506",
+                "epoch": 566,
+                "previousCredits": "61508167"
+              },
+              {
+                "credits": "62331913",
+                "epoch": 567,
+                "previousCredits": "61924506"
+              },
+              {
+                "credits": "62714317",
+                "epoch": 568,
+                "previousCredits": "62331913"
+              },
+              {
+                "credits": "63122820",
+                "epoch": 569,
+                "previousCredits": "62714317"
+              },
+              {
+                "credits": "63532100",
+                "epoch": 570,
+                "previousCredits": "63122820"
+              },
+              {
+                "credits": "63949191",
+                "epoch": 571,
+                "previousCredits": "63532100"
+              },
+              {
+                "credits": "64360092",
+                "epoch": 572,
+                "previousCredits": "63949191"
+              },
+              {
+                "credits": "64774651",
+                "epoch": 573,
+                "previousCredits": "64360092"
+              },
+              {
+                "credits": "65176993",
+                "epoch": 574,
+                "previousCredits": "64774651"
+              },
+              {
+                "credits": "65590084",
+                "epoch": 575,
+                "previousCredits": "65176993"
+              },
+              {
+                "credits": "66004004",
+                "epoch": 576,
+                "previousCredits": "65590084"
+              },
+              {
+                "credits": "66397475",
+                "epoch": 577,
+                "previousCredits": "66004004"
+              },
+              {
+                "credits": "66803157",
+                "epoch": 578,
+                "previousCredits": "66397475"
+              },
+              {
+                "credits": "67217185",
+                "epoch": 579,
+                "previousCredits": "66803157"
+              },
+              {
+                "credits": "67628195",
+                "epoch": 580,
+                "previousCredits": "67217185"
+              },
+              {
+                "credits": "68041053",
+                "epoch": 581,
+                "previousCredits": "67628195"
+              },
+              {
+                "credits": "68416033",
+                "epoch": 582,
+                "previousCredits": "68041053"
+              },
+              {
+                "credits": "68830538",
+                "epoch": 583,
+                "previousCredits": "68416033"
+              },
+              {
+                "credits": "69239263",
+                "epoch": 584,
+                "previousCredits": "68830538"
+              },
+              {
+                "credits": "69638571",
+                "epoch": 585,
+                "previousCredits": "69239263"
+              },
+              {
+                "credits": "70030867",
+                "epoch": 586,
+                "previousCredits": "69638571"
+              },
+              {
+                "credits": "70417865",
+                "epoch": 587,
+                "previousCredits": "70030867"
+              },
+              {
+                "credits": "70792788",
+                "epoch": 588,
+                "previousCredits": "70417865"
+              },
+              {
+                "credits": "71159632",
+                "epoch": 589,
+                "previousCredits": "70792788"
+              },
+              {
+                "credits": "71547407",
+                "epoch": 590,
+                "previousCredits": "71159632"
+              },
+              {
+                "credits": "71944435",
+                "epoch": 591,
+                "previousCredits": "71547407"
+              },
+              {
+                "credits": "72318412",
+                "epoch": 592,
+                "previousCredits": "71944435"
+              },
+              {
+                "credits": "72713943",
+                "epoch": 593,
+                "previousCredits": "72318412"
+              },
+              {
+                "credits": "73102446",
+                "epoch": 594,
+                "previousCredits": "72713943"
+              },
+              {
+                "credits": "73491094",
+                "epoch": 595,
+                "previousCredits": "73102446"
+              },
+              {
+                "credits": "73885159",
+                "epoch": 596,
+                "previousCredits": "73491094"
+              },
+              {
+                "credits": "74274892",
+                "epoch": 597,
+                "previousCredits": "73885159"
+              },
+              {
+                "credits": "74635621",
+                "epoch": 598,
+                "previousCredits": "74274892"
+              },
+              {
+                "credits": "74982297",
+                "epoch": 599,
+                "previousCredits": "74635621"
+              },
+              {
+                "credits": "75319144",
+                "epoch": 600,
+                "previousCredits": "74982297"
+              },
+              {
+                "credits": "75673570",
+                "epoch": 601,
+                "previousCredits": "75319144"
+              },
+              {
+                "credits": "76049410",
+                "epoch": 602,
+                "previousCredits": "75673570"
+              },
+              {
+                "credits": "76434739",
+                "epoch": 603,
+                "previousCredits": "76049410"
+              },
+              {
+                "credits": "76820859",
+                "epoch": 604,
+                "previousCredits": "76434739"
+              },
+              {
+                "credits": "77203169",
+                "epoch": 605,
+                "previousCredits": "76820859"
+              },
+              {
+                "credits": "77583655",
+                "epoch": 606,
+                "previousCredits": "77203169"
+              },
+              {
+                "credits": "77945770",
+                "epoch": 607,
+                "previousCredits": "77583655"
+              },
+              {
+                "credits": "78292527",
+                "epoch": 608,
+                "previousCredits": "77945770"
+              },
+              {
+                "credits": "78662941",
+                "epoch": 609,
+                "previousCredits": "78292527"
+              },
+              {
+                "credits": "79046880",
+                "epoch": 610,
+                "previousCredits": "78662941"
+              },
+              {
+                "credits": "79433859",
+                "epoch": 611,
+                "previousCredits": "79046880"
+              },
+              {
+                "credits": "79828915",
+                "epoch": 612,
+                "previousCredits": "79433859"
+              },
+              {
+                "credits": "80221084",
+                "epoch": 613,
+                "previousCredits": "79828915"
+              },
+              {
+                "credits": "80623253",
+                "epoch": 614,
+                "previousCredits": "80221084"
+              },
+              {
+                "credits": "80824593",
+                "epoch": 615,
+                "previousCredits": "80623253"
+              }
+            ],
+            "lastTimestamp": {
+              "slot": 265906805,
+              "timestamp": 1715767824
+            },
+            "nodePubkey": "6mT78jmg7L8mf5Zuhvi9URqB8BferibueYWjaZh8Tphy",
+            "priorVoters": [],
+            "rootSlot": 265906771,
+            "votes": [
+              {
+                "confirmationCount": 31,
+                "slot": 265906772
+              },
+              {
+                "confirmationCount": 30,
+                "slot": 265906773
+              },
+              {
+                "confirmationCount": 29,
+                "slot": 265906774
+              },
+              {
+                "confirmationCount": 28,
+                "slot": 265906775
+              },
+              {
+                "confirmationCount": 27,
+                "slot": 265906776
+              },
+              {
+                "confirmationCount": 26,
+                "slot": 265906777
+              },
+              {
+                "confirmationCount": 25,
+                "slot": 265906778
+              },
+              {
+                "confirmationCount": 24,
+                "slot": 265906779
+              },
+              {
+                "confirmationCount": 23,
+                "slot": 265906780
+              },
+              {
+                "confirmationCount": 22,
+                "slot": 265906781
+              },
+              {
+                "confirmationCount": 21,
+                "slot": 265906782
+              },
+              {
+                "confirmationCount": 20,
+                "slot": 265906783
+              },
+              {
+                "confirmationCount": 19,
+                "slot": 265906784
+              },
+              {
+                "confirmationCount": 18,
+                "slot": 265906788
+              },
+              {
+                "confirmationCount": 17,
+                "slot": 265906789
+              },
+              {
+                "confirmationCount": 16,
+                "slot": 265906790
+              },
+              {
+                "confirmationCount": 15,
+                "slot": 265906791
+              },
+              {
+                "confirmationCount": 14,
+                "slot": 265906792
+              },
+              {
+                "confirmationCount": 13,
+                "slot": 265906793
+              },
+              {
+                "confirmationCount": 12,
+                "slot": 265906794
+              },
+              {
+                "confirmationCount": 11,
+                "slot": 265906795
+              },
+              {
+                "confirmationCount": 10,
+                "slot": 265906796
+              },
+              {
+                "confirmationCount": 9,
+                "slot": 265906797
+              },
+              {
+                "confirmationCount": 8,
+                "slot": 265906798
+              },
+              {
+                "confirmationCount": 7,
+                "slot": 265906799
+              },
+              {
+                "confirmationCount": 6,
+                "slot": 265906800
+              },
+              {
+                "confirmationCount": 5,
+                "slot": 265906801
+              },
+              {
+                "confirmationCount": 4,
+                "slot": 265906802
+              },
+              {
+                "confirmationCount": 3,
+                "slot": 265906803
+              },
+              {
+                "confirmationCount": 2,
+                "slot": 265906804
+              },
+              {
+                "confirmationCount": 1,
+                "slot": 265906805
+              }
+            ]
+          },
+          "type": "vote"
+        },
+        "program": "vote",
+        "space": 3762
+      },
+      "executable": false,
+      "lamports": 2002531832,
+      "owner": "Vote111111111111111111111111111111111111111",
+      "rentEpoch": 18446744073709551615,
+      "space": 3762
+    }
+  },
+  "id": 1
+}

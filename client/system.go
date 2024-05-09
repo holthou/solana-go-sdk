@@ -3,6 +3,7 @@ package client
 import (
 	"context"
 	"errors"
+	"github.com/blocto/solana-go-sdk/program/stake"
 
 	"github.com/blocto/solana-go-sdk/common"
 	"github.com/blocto/solana-go-sdk/program/system"
@@ -32,4 +33,15 @@ func (c *Client) GetNonceFromNonceAccount(ctx context.Context, base58Addr string
 		return "", err
 	}
 	return base58.Encode(accuInfo.Data), nil
+}
+
+func (c *Client) GetStackAccount(ctx context.Context, base58Addr string) (stake.StakeAccount, error) {
+	accu, err := c.GetAccountInfo(ctx, base58Addr)
+	if err != nil {
+		return stake.StakeAccount{}, err
+	}
+	if accu.Owner != common.StakeProgramID {
+		return stake.StakeAccount{}, errors.New("owner mismatch")
+	}
+	return stake.StakeAccountDeserialize(accu.Data)
 }
