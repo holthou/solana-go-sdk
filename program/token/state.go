@@ -3,7 +3,6 @@ package token
 import (
 	"bytes"
 	"encoding/binary"
-
 	"github.com/blocto/solana-go-sdk/common"
 )
 
@@ -122,7 +121,7 @@ type TokenAccount struct {
 
 // TODO 这里针对 Token 2022 Program 的token待完善，这里只是初步解析
 func TokenAccountFromData(data []byte) (TokenAccount, error) {
-	if len(data) != TokenAccountSize && len(data) != Token2022AccountSize {
+	if len(data) != TokenAccountSize && len(data) != Token2022AccountSize && len(data) != Token2022AccountSizeA {
 		return TokenAccount{}, ErrInvalidAccountDataSize
 	}
 
