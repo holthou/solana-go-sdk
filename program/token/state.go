@@ -97,6 +97,7 @@ func MintAccountFromData(data []byte) (MintAccount, error) {
 
 const TokenAccountSize = 165
 const Token2022AccountSize = 182
+const Token2022AccountSizeA = 170
 
 type TokenAccountState uint8
 
