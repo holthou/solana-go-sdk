@@ -93,11 +93,16 @@ type CreateIdempotentParam struct {
 	Owner                  common.PublicKey
 	Mint                   common.PublicKey
 	AssociatedTokenAccount common.PublicKey
+	ProgramID              common.PublicKey
 }
 
 // CreateIdempotent creates an associated token account for the given wallet address and token mint,
 // if it doesn't already exist. Returns an error if the account exists, but with a different owner.
 func CreateIdempotent(param CreateIdempotentParam) types.Instruction {
+	if !bytes.Equal(param.ProgramID.Bytes(), common.TokenProgramID.Bytes()) &&
+		!bytes.Equal(param.ProgramID.Bytes(), common.Token2022ProgramID.Bytes()) {
+		panic("CreateIdempotent:TokenProgramID should only TokenProgramID or Token2022ProgramID")
+	}
 	data, err := borsh.Serialize(struct {
 		Instruction Instruction
 	}{
@@ -115,7 +120,7 @@ func CreateIdempotent(param CreateIdempotentParam) types.Instruction {
 			{PubKey: param.Owner, IsSigner: false, IsWritable: false},
 			{PubKey: param.Mint, IsSigner: false, IsWritable: false},
 			{PubKey: common.SystemProgramID, IsSigner: false, IsWritable: false},
-			{PubKey: common.TokenProgramID, IsSigner: false, IsWritable: false},
+			{PubKey: param.ProgramID, IsSigner: false, IsWritable: false},
 			{PubKey: common.SysVarRentPubkey, IsSigner: false, IsWritable: false},
 		},
 		Data: data,
