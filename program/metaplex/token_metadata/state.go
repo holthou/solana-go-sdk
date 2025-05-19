@@ -1,7 +1,10 @@
 package token_metadata
 
 import (
+	"encoding/binary"
 	"fmt"
+	"github.com/blocto/solana-go-sdk/program/token"
+	"reflect"
 	"strings"
 
 	"github.com/blocto/solana-go-sdk/common"
@@ -153,4 +156,86 @@ type MasterEditionV2 struct {
 	Key       Key
 	Supply    uint64
 	MaxSupply *uint64
+}
+
+type TokenMetadata struct {
+	Mint            *common.PublicKey
+	UpdateAuthority *common.PublicKey
+	Name            string
+	Symbol          string
+	Uri             string
+}
+
+type Metadata2022 struct {
+	token.MintAccount
+	TokenMetadata
+}
+
+func readUInt16LE(aa []byte) uint16 {
+	for i, j := 0, len(aa)-1; i < j; i, j = i+1, j-1 {
+		aa[i], aa[j] = aa[j], aa[i]
+	}
+	return binary.BigEndian.Uint16(aa)
+}
+
+func Metadata2022Deserialize(data []byte) (*Metadata2022, error) {
+	const (
+		TypeSize = 2
+		LengthSize
+	)
+
+	if len(data) < token.MintAccountSize {
+		return nil, fmt.Errorf("invalid mint data size %d shoud >= %d", len(data), token.MintAccountSize)
+	}
+
+	mintAccount, err := token.MintAccountFromData(data[:token.MintAccountSize])
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse data to a mint account, err: %w", err)
+	}
+
+	var tokenMetadata TokenMetadata
+
+	extensionTypeIndex := token.MintAccountSize
+	for extensionTypeIndex+TypeSize+LengthSize <= len(data) {
+		entryType := readUInt16LE(data[extensionTypeIndex : extensionTypeIndex+TypeSize])
+		extensionTypeIndex += TypeSize
+		entryLength := readUInt16LE(data[extensionTypeIndex : extensionTypeIndex+LengthSize])
+		extensionTypeIndex += LengthSize
+
+		if entryType == 0 && entryLength == 256 {
+			//这种情况不合乎规则，直接忽略
+			continue
+		}
+
+		if entryType == 19 {
+			insData := struct {
+				UpdateAuthority common.PublicKey
+				Mint            common.PublicKey
+				Name            string
+				Symbol          string
+				Uri             string
+			}{}
+			err = borsh.Deserialize(&insData, data[extensionTypeIndex:])
+			if err != nil {
+				return nil, fmt.Errorf("borsh.Deserialize %w", err)
+			}
+
+			if !reflect.DeepEqual(common.SystemProgramID, insData.UpdateAuthority) {
+				tokenMetadata.UpdateAuthority = &insData.UpdateAuthority
+			}
+			if !reflect.DeepEqual(common.SystemProgramID, insData.Mint) {
+				tokenMetadata.Mint = &insData.Mint
+			}
+			tokenMetadata.Name = insData.Name
+			tokenMetadata.Symbol = insData.Symbol
+			tokenMetadata.Uri = insData.Uri
+			break
+		}
+		extensionTypeIndex += int(entryLength)
+	}
+
+	return &Metadata2022{
+		MintAccount:   mintAccount,
+		TokenMetadata: tokenMetadata,
+	}, nil
 }

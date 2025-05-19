@@ -18,7 +18,7 @@ func main() {
 	// and you can use `tokenmeta.GetTokenMetaPubkey` to get the metadata account key
 	// here I take a random Degenerate Ape Academy as an example
 	mint := common.PublicKeyFromString("GphF2vTuzhwhLWBWWvD8y5QLCPp1aQC5EnzrWsnbiWPx")
-	metadataAccount, err := token_metadata.GetTokenMetaPubkey(mint)
+	metadataAccount, err := token_metadata.GetTokenMetaPubkey(mint, common.TokenProgramID)
 	if err != nil {
 		log.Fatalf("faield to get metadata account, err: %v", err)
 	}

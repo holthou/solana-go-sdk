@@ -28,12 +28,12 @@ func main() {
 	collection := types.NewAccount()
 	fmt.Printf("collection: %v\n", collection.PublicKey.ToBase58())
 
-	ata, _, err := common.FindAssociatedTokenAddress(feePayer.PublicKey, mint.PublicKey)
+	ata, _, err := common.FindAssociatedTokenAddress(feePayer.PublicKey, mint.PublicKey, common.TokenProgramID)
 	if err != nil {
 		log.Fatalf("failed to find a valid ata, err: %v", err)
 	}
 
-	tokenMetadataPubkey, err := token_metadata.GetTokenMetaPubkey(mint.PublicKey)
+	tokenMetadataPubkey, err := token_metadata.GetTokenMetaPubkey(mint.PublicKey, common.TokenProgramID)
 	if err != nil {
 		log.Fatalf("failed to find a valid token metadata, err: %v", err)
 

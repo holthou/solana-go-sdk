@@ -80,7 +80,7 @@ func TestGetTokenMetaPubkey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := GetTokenMetaPubkey(tt.args.mint)
+			got, err := GetTokenMetaPubkey(tt.args.mint, common.TokenProgramID)
 			assert.Equal(t, tt.wantErr, err)
 			assert.Equal(t, tt.want, got)
 		})

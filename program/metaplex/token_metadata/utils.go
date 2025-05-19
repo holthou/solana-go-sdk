@@ -6,14 +6,18 @@ import (
 	"github.com/blocto/solana-go-sdk/common"
 )
 
-func GetTokenMetaPubkey(mint common.PublicKey) (common.PublicKey, error) {
+// GetTokenMetaPubkey 支持获取
+// metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s
+// META4s4fSmpkTbZoUsgC1oBnWB31vQcmnN8giPw51Zu
+// 两种metaAccount账户的计算
+func GetTokenMetaPubkey(mint, metaplexTokenMetaProgramID common.PublicKey) (common.PublicKey, error) {
 	metadataAccount, _, err := common.FindProgramAddress(
 		[][]byte{
 			[]byte("metadata"),
-			common.MetaplexTokenMetaProgramID.Bytes(),
+			metaplexTokenMetaProgramID.Bytes(),
 			mint.Bytes(),
 		},
-		common.MetaplexTokenMetaProgramID,
+		metaplexTokenMetaProgramID,
 	)
 	if err != nil {
 		return common.PublicKey{}, err

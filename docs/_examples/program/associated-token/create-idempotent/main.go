@@ -28,7 +28,7 @@ func main() {
 		log.Fatalf("failed to get latest blockhash, err: %v", err)
 	}
 
-	ata, _, err := common.FindAssociatedTokenAddress(alice.PublicKey, mint)
+	ata, _, err := common.FindAssociatedTokenAddress(alice.PublicKey, mint, common.TokenProgramID)
 	if err != nil {
 		log.Fatalf("failed to find associated token address, err: %v", err)
 	}

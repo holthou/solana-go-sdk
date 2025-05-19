@@ -26,7 +26,7 @@ func main() {
 	nft := common.PublicKeyFromString("FK8eFRgmqewUzr7R6pYUxSPnSNusYmkhAV4e3pUJYdCd")
 
 	// get the metadata account address
-	tokenMetadataPubkey, err := token_metadata.GetTokenMetaPubkey(nft)
+	tokenMetadataPubkey, err := token_metadata.GetTokenMetaPubkey(nft, common.TokenProgramID)
 	if err != nil {
 		log.Fatalf("failed to find a valid token metadata, err: %v", err)
 	}
