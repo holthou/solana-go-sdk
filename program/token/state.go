@@ -97,6 +97,7 @@ func MintAccountFromData(data []byte) (MintAccount, error) {
 const TokenAccountSize = 165
 const Token2022AccountSize = 182
 const Token2022AccountSizeA = 170
+const Token2022AccountSizeB = 175
 
 type TokenAccountState uint8
 
@@ -121,7 +122,10 @@ type TokenAccount struct {
 
 // TODO 这里针对 Token 2022 Program 的token待完善，这里只是初步解析
 func TokenAccountFromData(data []byte) (TokenAccount, error) {
-	if len(data) != TokenAccountSize && len(data) != Token2022AccountSize && len(data) != Token2022AccountSizeA {
+	if len(data) != TokenAccountSize &&
+		len(data) != Token2022AccountSize &&
+		len(data) != Token2022AccountSizeA &&
+		len(data) != Token2022AccountSizeB {
 		return TokenAccount{}, ErrInvalidAccountDataSize
 	}
 
