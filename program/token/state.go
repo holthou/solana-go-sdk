@@ -98,6 +98,7 @@ const TokenAccountSize = 165
 const Token2022AccountSize = 182
 const Token2022AccountSizeA = 170
 const Token2022AccountSizeB = 175
+const Token2022AccountSizeC = 179
 
 type TokenAccountState uint8
 
@@ -125,7 +126,8 @@ func TokenAccountFromData(data []byte) (TokenAccount, error) {
 	if len(data) != TokenAccountSize &&
 		len(data) != Token2022AccountSize &&
 		len(data) != Token2022AccountSizeA &&
-		len(data) != Token2022AccountSizeB {
+		len(data) != Token2022AccountSizeB &&
+		len(data) != Token2022AccountSizeC {
 		return TokenAccount{}, ErrInvalidAccountDataSize
 	}
 
