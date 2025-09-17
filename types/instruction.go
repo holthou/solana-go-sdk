@@ -6,6 +6,7 @@ type CompiledInstruction struct {
 	ProgramIDIndex int
 	Accounts       []int
 	Data           []byte
+	StackHeight    *int
 }
 
 type Instruction struct {

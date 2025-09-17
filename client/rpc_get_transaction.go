@@ -135,10 +135,14 @@ func convertTransactionMeta(meta *rpc.TransactionMeta) (*TransactionMeta, error)
 				}
 			}
 
+			// 对于子交易而已，这个变量存在且 >= 2
+			stackHeight := int(parsedInstruction["stackHeight"].(float64))
+
 			compiledInstructions = append(compiledInstructions, types.CompiledInstruction{
 				ProgramIDIndex: int(parsedInstruction["programIdIndex"].(float64)),
 				Accounts:       accounts,
 				Data:           data,
+				StackHeight:    &stackHeight,
 			})
 		}
 
